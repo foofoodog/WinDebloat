@@ -2,6 +2,10 @@
 [Bb]in/
 [Oo]bj/
 publish/
+publish-single/
+publish-standalone/
+dist/
+dist-*/
 [Ll]og/
 [Ll]ogs/
 

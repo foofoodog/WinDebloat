@@ -1,0 +1,52 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build & Publish Release
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Build Standalone Single-File Executable
+        run: |
+          dotnet publish WinDebloat.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -o ./dist-standalone
+
+      - name: Build Framework-Dependent Portable Package
+        run: |
+          dotnet publish WinDebloat.csproj -c Release -o ./dist-portable
+          Compress-Archive -Path ./dist-portable/* -DestinationPath ./dist-standalone/WinDebloat-Portable.zip
+
+      - name: Duplicate Executable with Distinct Name
+        run: |
+          Copy-Item ./dist-standalone/WinDebloat.exe ./dist-standalone/WinDebloat-Standalone-x64.exe
+
+      - name: Create GitHub Release & Upload Artifacts
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          name: "WinDebloat ${{ github.ref_name }}"
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          files: |
+            ./dist-standalone/WinDebloat.exe
+            ./dist-standalone/WinDebloat-Standalone-x64.exe
+            ./dist-standalone/WinDebloat-Portable.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
