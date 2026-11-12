@@ -40,11 +40,13 @@
 - Safely configures telemetry, Superfetch (`SysMain`), and unused network/consumer services to `Disabled` in the Windows Service Control Manager and registry.
 - Detects dependent services to prevent system lockups.
 
-### ↩️ Full Undo & Revert Engine
-- Made a change you want to reverse? Completed optimizations, disabled services, and removed startup entries are neatly organized in the dedicated **↩️ Undo / Revert** tab.
+### ↩️ Persistent JSON Undo & Revert Engine
+- **Persistent Disk Storage**: Every change, disabled service, and removed startup entry is serialized to a persistent JSON history database (`%LOCALAPPDATA%\WinDebloat\undo_history.json`).
+- **Survives Reboots & App Restarts**: Historical modifications reload automatically into the **↩️ Undo / Revert** tab whenever you open the app.
 - **Dedicated Tab**: Keeps main debloat candidate views clean and focused, preventing clutter.
 - **Card-Level Revert**: Click `↩️ Revert Change` directly on any item in the Undo tab to restore it.
 - **Batch Revert**: Select multiple items in the Undo tab and click `↩️ Revert Selected` to restore them in one go.
+- **Clear History**: Includes a dedicated `🗑️ Clear History` button to purge saved history records from disk when you're satisfied with your optimizations.
 
 ### 🛡️ Smart Elevation & Modern UI
 - **Elevation When Needed**: Runs in standard mode without forcing UAC upfront; automatically prompts for elevation only when applying actions that require Administrator rights.

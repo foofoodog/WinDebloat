@@ -589,6 +589,21 @@
                                         <Style TargetType="Border"><Setter Property="CornerRadius" Value="6"/></Style>
                                     </Button.Resources>
                                 </Button>
+
+                                <Button Command="{Binding ClearHistoryCommand}" 
+                                        Content="🗑️ Clear History" 
+                                        Background="#334155" 
+                                        Foreground="#FCA5A5" 
+                                        FontWeight="SemiBold" 
+                                        Padding="12,6" 
+                                        Margin="8,0,0,0" 
+                                        BorderThickness="0" 
+                                        Cursor="Hand"
+                                        ToolTip="Clear persistent JSON undo history from disk">
+                                    <Button.Resources>
+                                        <Style TargetType="Border"><Setter Property="CornerRadius" Value="6"/></Style>
+                                    </Button.Resources>
+                                </Button>
                             </StackPanel>
                         </Grid>
                     </Border>

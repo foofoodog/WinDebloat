@@ -113,6 +113,17 @@ namespace WinDebloat.Services
                             IsRecommended = recommended,
                             IsSelected = recommended,
                             Tag = originalCmd,
+                            UndoHistoryEntry = new UndoRecord
+                            {
+                                Id = $"startup_hkcu_{currentValName}",
+                                Title = appName,
+                                Description = "Removed from login startup entries.",
+                                Category = nameof(DebloatCategory.Startup),
+                                RevertType = "StartupRegistry",
+                                TargetKey = hkcuRunKey,
+                                TargetValueName = currentValName,
+                                OriginalStringData = originalCmd
+                            },
                             ApplyAction = async (progress) =>
                             {
                                 progress.Report($"Removing startup entry: {currentValName}...");
@@ -340,6 +351,14 @@ namespace WinDebloat.Services
                 IsSelected = !bingApplied,
                 IsCompleted = bingApplied,
                 StatusMessage = bingApplied ? "Already Applied" : "Ready",
+                UndoHistoryEntry = new UndoRecord
+                {
+                    Id = "tweak_disable_bing_search",
+                    Title = "Disable Bing / Web Search in Start Menu",
+                    Description = "Disabled Bing web search integration in Start menu.",
+                    Category = nameof(DebloatCategory.SystemTweak),
+                    RevertType = "SystemTweak_BingSearch"
+                },
                 ApplyAction = async (progress) =>
                 {
                     progress.Report("Applying registry tweaks to disable web search in Start menu...");
@@ -408,6 +427,14 @@ namespace WinDebloat.Services
                 IsSelected = !widgetsApplied,
                 IsCompleted = widgetsApplied,
                 StatusMessage = widgetsApplied ? "Already Applied" : "Ready",
+                UndoHistoryEntry = new UndoRecord
+                {
+                    Id = "tweak_disable_widgets",
+                    Title = "Disable Windows Widgets & Feeds",
+                    Description = "Disabled Windows Widgets and background MSN feed caching.",
+                    Category = nameof(DebloatCategory.SystemTweak),
+                    RevertType = "SystemTweak_Widgets"
+                },
                 ApplyAction = async (progress) =>
                 {
                     progress.Report("Disabling Windows Widgets and MSN feeds...");
@@ -462,6 +489,14 @@ namespace WinDebloat.Services
                 IsSelected = !chromeApplied,
                 IsCompleted = chromeApplied,
                 StatusMessage = chromeApplied ? "Already Applied" : "Ready",
+                UndoHistoryEntry = new UndoRecord
+                {
+                    Id = "tweak_chrome_background",
+                    Title = "Disable Chrome Background Mode",
+                    Description = "Disabled Chrome background apps lingering in memory.",
+                    Category = nameof(DebloatCategory.SystemTweak),
+                    RevertType = "SystemTweak_Chrome"
+                },
                 ApplyAction = async (progress) =>
                 {
                     progress.Report("Disabling Chrome background apps lingering...");
@@ -508,6 +543,14 @@ namespace WinDebloat.Services
                 IsSelected = !edgeApplied,
                 IsCompleted = edgeApplied,
                 StatusMessage = edgeApplied ? "Already Applied" : "Ready",
+                UndoHistoryEntry = new UndoRecord
+                {
+                    Id = "tweak_edge_background",
+                    Title = "Disable Edge Startup Boost & Background Mode",
+                    Description = "Disabled Edge startup boost and background mode lingering.",
+                    Category = nameof(DebloatCategory.SystemTweak),
+                    RevertType = "SystemTweak_Edge"
+                },
                 ApplyAction = async (progress) =>
                 {
                     progress.Report("Disabling Edge background mode and startup boost...");
@@ -627,6 +670,16 @@ namespace WinDebloat.Services
                         IsCompleted = false,
                         StatusMessage = "Running",
                         RequiresAdmin = true,
+                        UndoHistoryEntry = new UndoRecord
+                        {
+                            Id = $"svc_{svc.Name}",
+                            Title = $"{svc.Title} ({svc.Name})",
+                            Description = $"Disabled and stopped background service: {svc.Title}.",
+                            Category = nameof(DebloatCategory.Service),
+                            RevertType = "ServiceDisable",
+                            ServiceName = svc.Name,
+                            OriginalServiceStartup = "Automatic"
+                        },
                         ApplyAction = async (progress) =>
                         {
                             progress.Report($"Disabling and stopping service {svc.Name}...");

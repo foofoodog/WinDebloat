@@ -33,6 +33,7 @@ namespace WinDebloat.Models
         public bool IsBloatware { get; set; }
         public bool IsKnownSuspect { get => IsBloatware; set => IsBloatware = value; }
         public object? Tag { get; set; }
+        public UndoRecord? UndoHistoryEntry { get; set; }
 
         public bool IsSelected
         {

@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using Microsoft.Win32;
 using WinDebloat.Models;
 using WinDebloat.Services;
 
@@ -14,6 +15,7 @@ namespace WinDebloat.ViewModels
     public class MainViewModel : INotifyPropertyChanged
     {
         private readonly ScannerService _scannerService = new();
+        private readonly HistoryService _historyService = new();
         private bool _isBusy;
         private string _progressText = "Ready";
         private double _memoryTotalGB;
@@ -32,6 +34,8 @@ namespace WinDebloat.ViewModels
         public ObservableCollection<DebloatItem> RevertItems { get; } = new();
 
         public ObservableCollection<string> Logs { get; } = new();
+
+        public string HistoryFilePath => _historyService.HistoryFilePath;
 
         public bool HasRevertItems => RevertItems.Count > 0;
         public bool HasNoRevertItems => !HasRevertItems;
@@ -109,6 +113,7 @@ namespace WinDebloat.ViewModels
         public ICommand UndoSelectedCommand { get; }
         public ICommand SelectAllRevertCommand { get; }
         public ICommand DeselectAllRevertCommand { get; }
+        public ICommand ClearHistoryCommand { get; }
 
         public MainViewModel()
         {
@@ -129,6 +134,7 @@ namespace WinDebloat.ViewModels
             {
                 foreach (var item in RevertItems) item.IsSelected = false;
             });
+            ClearHistoryCommand = new RelayCommand(async () => await ClearHistoryAsync());
 
             IsAdmin = SystemHelper.IsAdministrator();
             UpdateMemoryStats();
@@ -248,6 +254,9 @@ namespace WinDebloat.ViewModels
                     }
                 }
 
+                // Load persistent undo history from JSON database on disk
+                await LoadHistoryIntoRevertItemsAsync();
+
                 UpdateSelectedCount();
                 OnPropertyChanged(nameof(RevertTabHeader));
                 OnPropertyChanged(nameof(HasRevertItems));
@@ -263,6 +272,156 @@ namespace WinDebloat.ViewModels
                 IsBusy = false;
                 ProgressText = "Ready";
             }
+        }
+
+        private async Task LoadHistoryIntoRevertItemsAsync()
+        {
+            try
+            {
+                var history = await _historyService.LoadHistoryAsync();
+                foreach (var record in history)
+                {
+                    var existing = RevertItems.FirstOrDefault(i => string.Equals(i.Id, record.Id, StringComparison.OrdinalIgnoreCase));
+                    if (existing != null)
+                    {
+                        existing.UndoHistoryEntry = record;
+                        continue;
+                    }
+
+                    var item = CreateItemFromHistoryRecord(record);
+                    if (item != null)
+                    {
+                        item.PropertyChanged += Item_PropertyChanged;
+                        RevertItems.Add(item);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                AddLog($"Notice loading undo history: {ex.Message}");
+            }
+        }
+
+        private DebloatItem? CreateItemFromHistoryRecord(UndoRecord record)
+        {
+            var item = new DebloatItem
+            {
+                Id = record.Id,
+                Title = record.Title,
+                Description = $"{record.Description} (Applied: {record.AppliedAt:yyyy-MM-dd HH:mm})",
+                Details = $"Undo Database: {record.RevertType}" + 
+                          (!string.IsNullOrEmpty(record.TargetKey) ? $" | Key: {record.TargetKey}" : "") + 
+                          (!string.IsNullOrEmpty(record.ServiceName) ? $" | Service: {record.ServiceName}" : ""),
+                Category = Enum.TryParse<DebloatCategory>(record.Category, out var c) ? c : DebloatCategory.SystemTweak,
+                IsCompleted = true,
+                StatusMessage = "Applied",
+                UndoHistoryEntry = record
+            };
+
+            if (record.RevertType == "StartupRegistry")
+            {
+                string key = record.TargetKey ?? @"Software\Microsoft\Windows\CurrentVersion\Run";
+                string valName = record.TargetValueName ?? "";
+                string origCmd = record.OriginalStringData ?? "";
+
+                item.UndoAction = async (progress) =>
+                {
+                    progress.Report($"Restoring startup entry '{valName}'...");
+                    bool ok = SystemHelper.SetRegistryString(RegistryHive.CurrentUser, key, valName, origCmd);
+                    if (ok)
+                    {
+                        await _historyService.RemoveRecordAsync(record.Id);
+                        progress.Report($"Restored {valName} to startup.");
+                        return true;
+                    }
+                    progress.Report($"Failed to restore {valName}.");
+                    return false;
+                };
+            }
+            else if (record.RevertType == "ServiceDisable")
+            {
+                string svcName = record.ServiceName ?? "";
+                item.RequiresAdmin = true;
+                item.UndoAction = async (progress) =>
+                {
+                    progress.Report($"Restoring and re-enabling service {svcName}...");
+                    SystemHelper.SetRegistryDWord(RegistryHive.LocalMachine, $@"SYSTEM\CurrentControlSet\Services\{svcName}", "Start", 2);
+                    await SystemHelper.RunProcessAsync("sc.exe", $"config \"{svcName}\" start= auto", elevated: true);
+                    await SystemHelper.RunProcessAsync("sc.exe", $"start \"{svcName}\"", elevated: true);
+                    var cmd = $"Set-Service -Name '{svcName}' -StartupType Automatic -ErrorAction SilentlyContinue; Start-Service -Name '{svcName}' -ErrorAction SilentlyContinue";
+                    await SystemHelper.RunPowerShellCommandAsync(cmd, elevated: true);
+                    await _historyService.RemoveRecordAsync(record.Id);
+                    progress.Report($"Service {svcName} restored to Automatic and started.");
+                    return true;
+                };
+            }
+            else if (record.RevertType.StartsWith("SystemTweak"))
+            {
+                item.RequiresAdmin = record.RevertType.Contains("Chrome") || record.RevertType.Contains("Edge");
+                item.UndoAction = async (progress) =>
+                {
+                    bool ok = false;
+                    if (record.RevertType == "SystemTweak_BingSearch" || record.Id == "tweak_disable_bing_search")
+                    {
+                        progress.Report("Re-enabling Bing search in Start menu...");
+                        SystemHelper.SetRegistryDWord(RegistryHive.CurrentUser, @"Software\Policies\Microsoft\Windows\Explorer", "DisableSearchBoxSuggestions", 0);
+                        SystemHelper.SetRegistryDWord(RegistryHive.CurrentUser, @"Software\Microsoft\Windows\CurrentVersion\Search", "BingSearchEnabled", 1);
+                        SystemHelper.SetRegistryDWord(RegistryHive.CurrentUser, @"Software\Microsoft\Windows\CurrentVersion\Search", "CortanaConsent", 1);
+                        SystemHelper.SetRegistryDWord(RegistryHive.CurrentUser, @"Software\Policies\Microsoft\Windows\Windows Search", "ConnectedSearchUseWeb", 1);
+                        SystemHelper.SetRegistryDWord(RegistryHive.CurrentUser, @"Software\Policies\Microsoft\Windows\Windows Search", "DisableWebSearch", 0);
+                        if (SystemHelper.IsAdministrator())
+                        {
+                            SystemHelper.DeleteRegistryValue(RegistryHive.LocalMachine, @"Software\Policies\Microsoft\Windows\Explorer", "DisableSearchBoxSuggestions");
+                            SystemHelper.DeleteRegistryValue(RegistryHive.LocalMachine, @"Software\Policies\Microsoft\Windows\Windows Search", "ConnectedSearchUseWeb");
+                            SystemHelper.DeleteRegistryValue(RegistryHive.LocalMachine, @"Software\Policies\Microsoft\Windows\Windows Search", "DisableWebSearch");
+                        }
+                        ok = true;
+                    }
+                    else if (record.RevertType == "SystemTweak_Widgets" || record.Id == "tweak_disable_widgets")
+                    {
+                        progress.Report("Re-enabling Windows Widgets and feeds...");
+                        SystemHelper.SetRegistryDWord(RegistryHive.CurrentUser, @"Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced", "TaskbarDa", 1);
+                        SystemHelper.SetRegistryDWord(RegistryHive.CurrentUser, @"Software\Policies\Microsoft\Dsh", "AllowNewsAndInterests", 1);
+                        if (SystemHelper.IsAdministrator())
+                        {
+                            SystemHelper.DeleteRegistryValue(RegistryHive.LocalMachine, @"Software\Policies\Microsoft\Dsh", "AllowNewsAndInterests");
+                        }
+                        ok = true;
+                    }
+                    else if (record.RevertType == "SystemTweak_Chrome" || record.Id == "tweak_chrome_background")
+                    {
+                        progress.Report("Restoring Chrome background mode...");
+                        SystemHelper.DeleteRegistryValue(RegistryHive.CurrentUser, @"Software\Policies\Google\Chrome", "BackgroundModeEnabled");
+                        if (SystemHelper.IsAdministrator())
+                        {
+                            SystemHelper.DeleteRegistryValue(RegistryHive.LocalMachine, @"Software\Policies\Google\Chrome", "BackgroundModeEnabled");
+                        }
+                        ok = true;
+                    }
+                    else if (record.RevertType == "SystemTweak_Edge" || record.Id == "tweak_edge_background")
+                    {
+                        progress.Report("Restoring Edge background mode and startup boost...");
+                        SystemHelper.DeleteRegistryValue(RegistryHive.CurrentUser, @"Software\Policies\Microsoft\Edge", "BackgroundModeEnabled");
+                        SystemHelper.DeleteRegistryValue(RegistryHive.CurrentUser, @"Software\Policies\Microsoft\Edge", "StartupBoostEnabled");
+                        if (SystemHelper.IsAdministrator())
+                        {
+                            SystemHelper.DeleteRegistryValue(RegistryHive.LocalMachine, @"Software\Policies\Microsoft\Edge", "BackgroundModeEnabled");
+                            SystemHelper.DeleteRegistryValue(RegistryHive.LocalMachine, @"Software\Policies\Microsoft\Edge", "StartupBoostEnabled");
+                        }
+                        ok = true;
+                    }
+
+                    if (ok)
+                    {
+                        await _historyService.RemoveRecordAsync(record.Id);
+                        progress.Report($"Reverted {record.Title}.");
+                        return true;
+                    }
+                    return false;
+                };
+            }
+
+            return item;
         }
 
         private void Item_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -415,6 +574,13 @@ namespace WinDebloat.ViewModels
                             item.StatusMessage = "Completed";
                             item.IsSelected = false;
                             successCount++;
+
+                            // Persist to JSON history database on disk
+                            if (item.UndoHistoryEntry != null)
+                            {
+                                item.UndoHistoryEntry.AppliedAt = DateTime.Now;
+                                await _historyService.SaveRecordAsync(item.UndoHistoryEntry);
+                            }
 
                             // Remove from active candidate tabs and move to Undo / Revert tab if supported
                             Application.Current?.Dispatcher?.Invoke(() =>
@@ -570,6 +736,9 @@ namespace WinDebloat.ViewModels
                     item.StatusMessage = "Ready";
                     item.IsSelected = false;
 
+                    // Remove from persistent JSON database
+                    await _historyService.RemoveRecordAsync(item.Id);
+
                     Application.Current?.Dispatcher?.Invoke(() =>
                     {
                         RevertItems.Remove(item);
@@ -658,6 +827,9 @@ namespace WinDebloat.ViewModels
                             item.StatusMessage = "Ready";
                             item.IsSelected = false;
 
+                            // Remove from persistent JSON database
+                            await _historyService.RemoveRecordAsync(item.Id);
+
                             Application.Current?.Dispatcher?.Invoke(() =>
                             {
                                 RevertItems.Remove(item);
@@ -700,6 +872,35 @@ namespace WinDebloat.ViewModels
             ProgressText = "Done";
             AddLog($"Finished reverting {reverted} item(s).");
             ModernDialog.ShowInfo("Revert Complete", $"Successfully reverted {reverted} item(s) back to their active configuration.", ModernDialogType.Success);
+        }
+
+        public async Task ClearHistoryAsync()
+        {
+            if (RevertItems.Count == 0)
+            {
+                ModernDialog.ShowInfo("Undo History", "There are no history records to clear.", ModernDialogType.Info);
+                return;
+            }
+
+            bool confirm = ModernDialog.ShowConfirm(
+                "Clear Undo History Database?",
+                $"Are you sure you want to clear the undo history database?\n\n" +
+                $"This will permanently delete the saved rollback records from disk ({HistoryFilePath}).\n\n" +
+                "Current system tweaks and disabled services will remain in place, but will be removed from the Undo list.",
+                confirmText: "🗑️ Clear History",
+                cancelText: "Cancel",
+                type: ModernDialogType.Warning);
+
+            if (!confirm) return;
+
+            await _historyService.ClearHistoryAsync();
+            RevertItems.Clear();
+            UpdateSelectedCount();
+            OnPropertyChanged(nameof(RevertTabHeader));
+            OnPropertyChanged(nameof(HasRevertItems));
+            OnPropertyChanged(nameof(HasNoRevertItems));
+            AddLog("Undo history database cleared from disk.");
+            ModernDialog.ShowInfo("History Cleared", "The undo history database was successfully cleared from disk.", ModernDialogType.Success);
         }
 
         private void AddLog(string message)
