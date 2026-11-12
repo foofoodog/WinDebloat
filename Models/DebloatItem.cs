@@ -30,7 +30,8 @@ namespace WinDebloat.Models
         public bool IsRecommended { get; set; }
         public bool RequiresAdmin { get; set; }
         public bool RequiresReboot { get; set; }
-        public bool IsKnownSuspect { get; set; }
+        public bool IsBloatware { get; set; }
+        public bool IsKnownSuspect { get => IsBloatware; set => IsBloatware = value; }
         public object? Tag { get; set; }
 
         public bool IsSelected

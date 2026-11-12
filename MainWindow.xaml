@@ -130,48 +130,17 @@
                                            Foreground="#C4B5FD"/>
                             </Border>
 
-                            <!-- Known Suspect Tag -->
+                            <!-- Bloatware Tag -->
                             <Border Background="#3B0764" 
                                     CornerRadius="4" 
                                     Padding="6,2" 
                                     Margin="8,0,0,0"
-                                    Visibility="{Binding IsKnownSuspect, Converter={StaticResource BoolToVis}}">
-                                <TextBlock Text="KNOWN SUSPECT" 
+                                    Visibility="{Binding IsBloatware, Converter={StaticResource BoolToVis}}">
+                                <TextBlock Text="BLOATWARE" 
                                            FontSize="10" 
                                            FontWeight="Bold" 
                                            Foreground="#D8B4FE"/>
                             </Border>
-
-                            <!-- Completed Tag -->
-                            <Border Background="#1E3A8A" 
-                                    CornerRadius="4" 
-                                    Padding="6,2" 
-                                    Margin="8,0,0,0"
-                                    Visibility="{Binding IsCompleted, Converter={StaticResource BoolToVis}}">
-                                <TextBlock Text="DONE" 
-                                           FontSize="10" 
-                                           FontWeight="Bold" 
-                                           Foreground="#60A5FA"/>
-                            </Border>
-
-                            <!-- Revert / Undo Button -->
-                            <Button Command="{Binding DataContext.UndoItemCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                    CommandParameter="{Binding}"
-                                    Content="↩️ Revert" 
-                                    Background="#1E293B" 
-                                    Foreground="#A5B4FC" 
-                                    BorderBrush="#6366F1" 
-                                    BorderThickness="1" 
-                                    FontWeight="SemiBold" 
-                                    FontSize="10" 
-                                    Padding="6,2" 
-                                    Margin="8,0,0,0" 
-                                    Cursor="Hand"
-                                    Visibility="{Binding CanUndoAndCompleted, Converter={StaticResource BoolToVis}}">
-                                <Button.Resources>
-                                    <Style TargetType="Border"><Setter Property="CornerRadius" Value="4"/></Style>
-                                </Button.Resources>
-                            </Button>
                         </StackPanel>
 
                         <TextBlock Text="{Binding Description}" 
@@ -203,6 +172,104 @@
                         </Border>
                         <TextBlock Text="{Binding StatusMessage}" 
                                    Foreground="#64748B" 
+                                   FontSize="11" 
+                                   HorizontalAlignment="Right" 
+                                   Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </DataTemplate>
+
+        <!-- Revert Item Template for Undo Tab -->
+        <DataTemplate x:Key="RevertItemTemplate">
+            <Border Background="#1E293B" 
+                    BorderBrush="#334155" 
+                    BorderThickness="1" 
+                    CornerRadius="8" 
+                    Margin="0,0,0,10" 
+                    Padding="14,12">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Checkbox for bulk revert -->
+                    <CheckBox IsChecked="{Binding IsSelected}" 
+                              VerticalAlignment="Center" 
+                              Margin="0,0,14,0">
+                        <CheckBox.LayoutTransform>
+                            <ScaleTransform ScaleX="1.3" ScaleY="1.3"/>
+                        </CheckBox.LayoutTransform>
+                    </CheckBox>
+
+                    <!-- Information Stack -->
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                            <TextBlock Text="{Binding Title}" 
+                                       FontWeight="Bold" 
+                                       FontSize="15" 
+                                       Foreground="#F8FAFC" />
+
+                            <!-- Status Badge -->
+                            <Border Background="#1E3A8A" 
+                                    CornerRadius="4" 
+                                    Padding="6,2" 
+                                    Margin="10,0,0,0">
+                                <TextBlock Text="APPLIED" 
+                                           FontSize="10" 
+                                           FontWeight="Bold" 
+                                           Foreground="#60A5FA"/>
+                            </Border>
+
+                            <!-- Category Badge -->
+                            <Border Background="#312E81" 
+                                    CornerRadius="4" 
+                                    Padding="6,2" 
+                                    Margin="8,0,0,0">
+                                <TextBlock Text="{Binding Category}" 
+                                           FontSize="10" 
+                                           FontWeight="Bold" 
+                                           Foreground="#C7D2FE"/>
+                            </Border>
+                        </StackPanel>
+
+                        <TextBlock Text="{Binding Description}" 
+                                   Foreground="#94A3B8" 
+                                   FontSize="13" 
+                                   TextWrapping="Wrap" 
+                                   Margin="0,0,0,2"/>
+
+                        <TextBlock Text="{Binding Details}" 
+                                   Foreground="#64748B" 
+                                   FontSize="11" 
+                                   FontFamily="Consolas"
+                                   TextTrimming="CharacterEllipsis"/>
+                    </StackPanel>
+
+                    <!-- Revert Action & Status -->
+                    <StackPanel Grid.Column="2" 
+                                VerticalAlignment="Center" 
+                                HorizontalAlignment="Right" 
+                                Margin="12,0,0,0">
+                        <Button Command="{Binding DataContext.UndoItemCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                CommandParameter="{Binding}"
+                                Content="↩️ Revert Change" 
+                                Background="#312E81" 
+                                Foreground="#E0E7FF" 
+                                BorderBrush="#6366F1" 
+                                BorderThickness="1" 
+                                FontWeight="Bold" 
+                                FontSize="12" 
+                                Padding="12,6" 
+                                Cursor="Hand">
+                            <Button.Resources>
+                                <Style TargetType="Border"><Setter Property="CornerRadius" Value="6"/></Style>
+                            </Button.Resources>
+                        </Button>
+                        <TextBlock Text="{Binding StatusMessage}" 
+                                   Foreground="#818CF8" 
                                    FontSize="11" 
                                    HorizontalAlignment="Right" 
                                    Margin="0,4,0,0"/>
@@ -429,8 +496,8 @@
                 </ScrollViewer>
             </TabItem>
 
-            <!-- Known Suspects (Bloatware) Tab -->
-            <TabItem Header="🗑️ Known Suspects (Bloatware)">
+            <!-- Bloatware Tab -->
+            <TabItem Header="🗑️ Bloatware">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,12,0,0">
                     <ItemsControl ItemsSource="{Binding BloatwareItems}" ItemTemplate="{StaticResource DebloatItemTemplate}"/>
                 </ScrollViewer>
@@ -448,6 +515,117 @@
                 <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,12,0,0">
                     <ItemsControl ItemsSource="{Binding UserAppItems}" ItemTemplate="{StaticResource DebloatItemTemplate}"/>
                 </ScrollViewer>
+            </TabItem>
+
+            <!-- Dedicated Full Undo & Revert Tab -->
+            <TabItem Header="{Binding RevertTabHeader}">
+                <Grid Margin="0,12,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Revert Toolbar -->
+                    <Border Grid.Row="0" 
+                            Background="#1E293B" 
+                            BorderBrush="#334155" 
+                            BorderThickness="1" 
+                            CornerRadius="8" 
+                            Padding="14,10" 
+                            Margin="0,0,0,12">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="↩️ Full Undo &amp; Revert Center" 
+                                           FontWeight="Bold" 
+                                           FontSize="14" 
+                                           Foreground="#F8FAFC"/>
+                                <TextBlock Text="Revert previously applied optimizations, restore registry tweaks, or re-enable stopped services." 
+                                           FontSize="12" 
+                                           Foreground="#94A3B8" 
+                                           Margin="0,2,0,0"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                <Button Command="{Binding SelectAllRevertCommand}" 
+                                        Content="Select All" 
+                                        Background="#334155" 
+                                        Foreground="White" 
+                                        Padding="12,6" 
+                                        Margin="0,0,8,0" 
+                                        BorderThickness="0" 
+                                        Cursor="Hand">
+                                    <Button.Resources>
+                                        <Style TargetType="Border"><Setter Property="CornerRadius" Value="6"/></Style>
+                                    </Button.Resources>
+                                </Button>
+
+                                <Button Command="{Binding DeselectAllRevertCommand}" 
+                                        Content="Clear All" 
+                                        Background="#334155" 
+                                        Foreground="White" 
+                                        Padding="12,6" 
+                                        Margin="0,0,8,0" 
+                                        BorderThickness="0" 
+                                        Cursor="Hand">
+                                    <Button.Resources>
+                                        <Style TargetType="Border"><Setter Property="CornerRadius" Value="6"/></Style>
+                                    </Button.Resources>
+                                </Button>
+
+                                <Button Command="{Binding UndoSelectedCommand}" 
+                                        Content="↩️ Revert Selected" 
+                                        Background="#4F46E5" 
+                                        Foreground="White" 
+                                        FontWeight="Bold" 
+                                        Padding="14,6" 
+                                        BorderThickness="0" 
+                                        Cursor="Hand">
+                                    <Button.Resources>
+                                        <Style TargetType="Border"><Setter Property="CornerRadius" Value="6"/></Style>
+                                    </Button.Resources>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <!-- Empty State Notice -->
+                    <Border Grid.Row="1" 
+                            Background="#1E293B" 
+                            BorderBrush="#334155" 
+                            BorderThickness="1" 
+                            CornerRadius="8" 
+                            Padding="40,30" 
+                            VerticalAlignment="Top"
+                            Visibility="{Binding HasNoRevertItems, Converter={StaticResource BoolToVis}}">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock Text="✨" FontSize="36" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                            <TextBlock Text="No Applied Changes to Revert" 
+                                       FontWeight="Bold" 
+                                       FontSize="16" 
+                                       Foreground="#F8FAFC" 
+                                       HorizontalAlignment="Center" 
+                                       Margin="0,0,0,6"/>
+                            <TextBlock Text="When you apply optimizations, disable services, or modify startup entries, items that support rollback will appear here." 
+                                       Foreground="#94A3B8" 
+                                       FontSize="13" 
+                                       HorizontalAlignment="Center" 
+                                       TextWrapping="Wrap" 
+                                       TextAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- List of Revertable Items -->
+                    <ScrollViewer Grid.Row="1" 
+                                  VerticalScrollBarVisibility="Auto" 
+                                  Visibility="{Binding HasRevertItems, Converter={StaticResource BoolToVis}}">
+                        <ItemsControl ItemsSource="{Binding RevertItems}" ItemTemplate="{StaticResource RevertItemTemplate}"/>
+                    </ScrollViewer>
+                </Grid>
             </TabItem>
         </TabControl>
 
@@ -499,68 +677,8 @@
                             Background="#334155" 
                             Foreground="White" 
                             Padding="12,7" 
-                            Margin="0,0,12,0" 
                             BorderThickness="0" 
                             Cursor="Hand">
-                        <Button.Resources>
-                            <Style TargetType="Border"><Setter Property="CornerRadius" Value="6"/></Style>
-                        </Button.Resources>
-                    </Button>
-
-                    <!-- Toggle Button to Show/Hide Done Items -->
-                    <ToggleButton Command="{Binding ToggleShowDoneCommand}"
-                                  IsChecked="{Binding ShowDoneItems, Mode=TwoWay}"
-                                  Content="{Binding DoneToggleText}"
-                                  Background="#1E293B"
-                                  Foreground="#94A3B8"
-                                  BorderBrush="#475569"
-                                  BorderThickness="1"
-                                  FontWeight="SemiBold"
-                                  FontSize="12"
-                                  Padding="12,6"
-                                  Cursor="Hand">
-                        <ToggleButton.Style>
-                            <Style TargetType="ToggleButton">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="ToggleButton">
-                                            <Border Name="Border" 
-                                                    Background="{TemplateBinding Background}" 
-                                                    BorderBrush="{TemplateBinding BorderBrush}" 
-                                                    BorderThickness="{TemplateBinding BorderThickness}" 
-                                                    CornerRadius="6" 
-                                                    Padding="{TemplateBinding Padding}">
-                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                            </Border>
-                                            <ControlTemplate.Triggers>
-                                                <Trigger Property="IsChecked" Value="True">
-                                                    <Setter TargetName="Border" Property="Background" Value="#312E81"/>
-                                                    <Setter TargetName="Border" Property="BorderBrush" Value="#6366F1"/>
-                                                    <Setter Property="Foreground" Value="#C7D2FE"/>
-                                                </Trigger>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter TargetName="Border" Property="BorderBrush" Value="#818CF8"/>
-                                                </Trigger>
-                                            </ControlTemplate.Triggers>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </ToggleButton.Style>
-                    </ToggleButton>
-
-                    <!-- Revert / Undo Selected Button -->
-                    <Button Command="{Binding UndoSelectedCommand}"
-                            Content="↩️ Revert Selected"
-                            Background="#312E81"
-                            Foreground="#C7D2FE"
-                            FontWeight="SemiBold"
-                            FontSize="12"
-                            Padding="12,6"
-                            Margin="8,0,0,0"
-                            BorderThickness="0"
-                            Cursor="Hand"
-                            Visibility="{Binding ShowDoneItems, Converter={StaticResource BoolToVis}}">
                         <Button.Resources>
                             <Style TargetType="Border"><Setter Property="CornerRadius" Value="6"/></Style>
                         </Button.Resources>

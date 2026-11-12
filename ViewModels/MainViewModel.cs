@@ -5,7 +5,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Data;
 using System.Windows.Input;
 using WinDebloat.Models;
 using WinDebloat.Services;
@@ -23,7 +22,6 @@ namespace WinDebloat.ViewModels
         private int _memoryPercent;
         private bool _isAdmin;
         private int _selectedCount;
-        private bool _showDoneItems = false; // Don't show done items by default
 
         public ObservableCollection<DebloatItem> AllItems { get; } = new();
         public ObservableCollection<DebloatItem> StartupItems { get; } = new();
@@ -31,26 +29,16 @@ namespace WinDebloat.ViewModels
         public ObservableCollection<DebloatItem> SystemTweakItems { get; } = new();
         public ObservableCollection<DebloatItem> ServiceItems { get; } = new();
         public ObservableCollection<DebloatItem> UserAppItems { get; } = new();
+        public ObservableCollection<DebloatItem> RevertItems { get; } = new();
 
         public ObservableCollection<string> Logs { get; } = new();
 
-        public bool ShowDoneItems
-        {
-            get => _showDoneItems;
-            set
-            {
-                _showDoneItems = value;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(DoneToggleText));
-                RefreshViewFilters();
-            }
-        }
+        public bool HasRevertItems => RevertItems.Count > 0;
+        public bool HasNoRevertItems => !HasRevertItems;
 
-        public int CompletedCount => AllItems.Count(i => i.IsCompleted);
-
-        public string DoneToggleText => ShowDoneItems
-            ? (CompletedCount > 0 ? $"👁️ Hide Done ({CompletedCount})" : "👁️ Hide Done")
-            : (CompletedCount > 0 ? $"👁️ Show Done ({CompletedCount})" : "👁️ Show Done");
+        public string RevertTabHeader => RevertItems.Count > 0
+            ? $"↩️ Undo / Revert ({RevertItems.Count})"
+            : "↩️ Undo / Revert";
 
         public bool IsBusy
         {
@@ -116,10 +104,11 @@ namespace WinDebloat.ViewModels
         public ICommand DeselectAllCommand { get; }
         public ICommand ApplySelectedCommand { get; }
         public ICommand RelaunchAdminCommand { get; }
-        public ICommand ToggleShowDoneCommand { get; }
         public ICommand CreateRestorePointCommand { get; }
         public ICommand UndoItemCommand { get; }
         public ICommand UndoSelectedCommand { get; }
+        public ICommand SelectAllRevertCommand { get; }
+        public ICommand DeselectAllRevertCommand { get; }
 
         public MainViewModel()
         {
@@ -129,10 +118,17 @@ namespace WinDebloat.ViewModels
             DeselectAllCommand = new RelayCommand(DeselectAll);
             ApplySelectedCommand = new RelayCommand(async () => await ApplySelectedAsync(), () => !IsBusy && SelectedCount > 0);
             RelaunchAdminCommand = new RelayCommand(RelaunchAdmin);
-            ToggleShowDoneCommand = new RelayCommand(() => ShowDoneItems = !ShowDoneItems);
             CreateRestorePointCommand = new RelayCommand(async () => await CreateRestorePointAsync());
             UndoItemCommand = new RelayCommand<DebloatItem>(async item => await UndoItemAsync(item));
             UndoSelectedCommand = new RelayCommand(async () => await UndoSelectedAsync());
+            SelectAllRevertCommand = new RelayCommand(() =>
+            {
+                foreach (var item in RevertItems) item.IsSelected = true;
+            });
+            DeselectAllRevertCommand = new RelayCommand(() =>
+            {
+                foreach (var item in RevertItems) item.IsSelected = false;
+            });
 
             IsAdmin = SystemHelper.IsAdministrator();
             UpdateMemoryStats();
@@ -212,6 +208,7 @@ namespace WinDebloat.ViewModels
                 SystemTweakItems.Clear();
                 ServiceItems.Clear();
                 UserAppItems.Clear();
+                RevertItems.Clear();
 
                 var scanned = await _scannerService.ScanAllAsync();
 
@@ -220,31 +217,42 @@ namespace WinDebloat.ViewModels
                     item.PropertyChanged += Item_PropertyChanged;
                     AllItems.Add(item);
 
-                    switch (item.Category)
+                    if (item.IsCompleted)
                     {
-                        case DebloatCategory.Startup:
-                            StartupItems.Add(item);
-                            break;
-                        case DebloatCategory.BloatwareApp:
-                            BloatwareItems.Add(item);
-                            break;
-                        case DebloatCategory.SystemTweak:
-                            SystemTweakItems.Add(item);
-                            break;
-                        case DebloatCategory.Service:
-                            ServiceItems.Add(item);
-                            break;
-                        case DebloatCategory.UserInstalledApp:
-                            UserAppItems.Add(item);
-                            break;
+                        // Completed items with undo support go directly to the Revert tab
+                        if (item.CanUndo)
+                        {
+                            RevertItems.Add(item);
+                        }
+                    }
+                    else
+                    {
+                        switch (item.Category)
+                        {
+                            case DebloatCategory.Startup:
+                                StartupItems.Add(item);
+                                break;
+                            case DebloatCategory.BloatwareApp:
+                                BloatwareItems.Add(item);
+                                break;
+                            case DebloatCategory.SystemTweak:
+                                SystemTweakItems.Add(item);
+                                break;
+                            case DebloatCategory.Service:
+                                ServiceItems.Add(item);
+                                break;
+                            case DebloatCategory.UserInstalledApp:
+                                UserAppItems.Add(item);
+                                break;
+                        }
                     }
                 }
 
                 UpdateSelectedCount();
-                OnPropertyChanged(nameof(CompletedCount));
-                OnPropertyChanged(nameof(DoneToggleText));
-                RefreshViewFilters();
-                AddLog($"Scan complete. Found {AllItems.Count} total items ({StartupItems.Count} startup, {BloatwareItems.Count} bloatware, {SystemTweakItems.Count} tweaks, {ServiceItems.Count} services, {UserAppItems.Count} user apps).");
+                OnPropertyChanged(nameof(RevertTabHeader));
+                OnPropertyChanged(nameof(HasRevertItems));
+                OnPropertyChanged(nameof(HasNoRevertItems));
+                AddLog($"Scan complete. Found {AllItems.Count} total items ({StartupItems.Count} startup, {BloatwareItems.Count} bloatware, {SystemTweakItems.Count} tweaks, {ServiceItems.Count} services, {UserAppItems.Count} user apps, {RevertItems.Count} reversible in Undo tab).");
             }
             catch (Exception ex)
             {
@@ -257,46 +265,11 @@ namespace WinDebloat.ViewModels
             }
         }
 
-        private void RefreshViewFilters()
-        {
-            Application.Current?.Dispatcher?.Invoke(() =>
-            {
-                var collections = new System.Collections.IEnumerable[] { StartupItems, BloatwareItems, SystemTweakItems, ServiceItems, UserAppItems };
-                foreach (var col in collections)
-                {
-                    var view = CollectionViewSource.GetDefaultView(col);
-                    if (view != null)
-                    {
-                        view.Filter = FilterItem;
-                        view.Refresh();
-                    }
-                }
-            });
-        }
-
-        private bool FilterItem(object obj)
-        {
-            if (obj is DebloatItem item)
-            {
-                if (!ShowDoneItems && item.IsCompleted)
-                    return false;
-                return true;
-            }
-            return false;
-        }
-
         private void Item_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(DebloatItem.IsSelected))
             {
                 UpdateSelectedCount();
-            }
-            else if (e.PropertyName == nameof(DebloatItem.IsCompleted))
-            {
-                OnPropertyChanged(nameof(CompletedCount));
-                OnPropertyChanged(nameof(DoneToggleText));
-                UpdateSelectedCount();
-                RefreshViewFilters();
             }
         }
 
@@ -307,9 +280,9 @@ namespace WinDebloat.ViewModels
 
         private void SelectRecommended()
         {
-            foreach (var item in AllItems)
+            foreach (var item in AllItems.Where(i => !i.IsCompleted))
             {
-                item.IsSelected = item.IsRecommended && !item.IsCompleted;
+                item.IsSelected = item.IsRecommended;
             }
             UpdateSelectedCount();
             AddLog("Selected all recommended safe debloat options.");
@@ -317,9 +290,9 @@ namespace WinDebloat.ViewModels
 
         private void SelectAll()
         {
-            foreach (var item in AllItems)
+            foreach (var item in AllItems.Where(i => !i.IsCompleted))
             {
-                item.IsSelected = !item.IsCompleted;
+                item.IsSelected = true;
             }
             UpdateSelectedCount();
             AddLog("Selected all pending items.");
@@ -327,12 +300,12 @@ namespace WinDebloat.ViewModels
 
         private void DeselectAll()
         {
-            foreach (var item in AllItems)
+            foreach (var item in AllItems.Where(i => !i.IsCompleted))
             {
                 item.IsSelected = false;
             }
             UpdateSelectedCount();
-            AddLog("Deselected all items.");
+            AddLog("Deselected all candidate items.");
         }
 
         public async Task ApplySelectedAsync(bool promptForElevation = true)
@@ -382,14 +355,37 @@ namespace WinDebloat.ViewModels
                 }
             }
 
-            bool confirmed = ModernDialog.ShowConfirm(
-                "Confirm Debloat Execution",
-                $"Are you sure you want to apply optimizations and changes to {selected.Count} selected item(s)?",
-                confirmText: "⚡ Apply Changes",
+            // Prompt to create an optional restore point before continuing removal
+            var restoreChoice = ModernDialog.ShowPrompt(
+                "Create System Restore Point?",
+                $"You are about to optimize or remove {selected.Count} selected item(s).\n\n" +
+                "Would you like to create an optional System Restore Point before proceeding?\n\n" +
+                "Creating a snapshot allows Windows to restore your previous configuration if needed.",
+                primaryText: "🛡️ Create Restore Point & Continue",
+                secondaryText: "Skip & Continue",
                 cancelText: "Cancel",
-                type: ModernDialogType.Confirm);
+                type: ModernDialogType.Shield);
 
-            if (!confirmed) return;
+            if (restoreChoice == ModernDialogResult.Cancel)
+            {
+                AddLog("Debloat execution cancelled by user.");
+                return;
+            }
+
+            if (restoreChoice == ModernDialogResult.Yes)
+            {
+                AddLog("Creating pre-removal System Restore Point...");
+                ProgressText = "Creating System Restore Point...";
+                var (rpOk, rpMsg) = await SystemHelper.CreateRestorePoint("WinDebloat Pre-Debloat Snapshot");
+                if (rpOk)
+                {
+                    AddLog("System Restore Point created successfully.");
+                }
+                else
+                {
+                    AddLog($"System Restore Point notification: {rpMsg}. Proceeding with removal...");
+                }
+            }
 
             IsBusy = true;
             ProgressText = "Applying selected actions...";
@@ -417,7 +413,36 @@ namespace WinDebloat.ViewModels
                             item.IsCompleted = true;
                             item.HasError = false;
                             item.StatusMessage = "Completed";
+                            item.IsSelected = false;
                             successCount++;
+
+                            // Remove from active candidate tabs and move to Undo / Revert tab if supported
+                            Application.Current?.Dispatcher?.Invoke(() =>
+                            {
+                                switch (item.Category)
+                                {
+                                    case DebloatCategory.Startup:
+                                        StartupItems.Remove(item);
+                                        break;
+                                    case DebloatCategory.BloatwareApp:
+                                        BloatwareItems.Remove(item);
+                                        break;
+                                    case DebloatCategory.SystemTweak:
+                                        SystemTweakItems.Remove(item);
+                                        break;
+                                    case DebloatCategory.Service:
+                                        ServiceItems.Remove(item);
+                                        break;
+                                    case DebloatCategory.UserInstalledApp:
+                                        UserAppItems.Remove(item);
+                                        break;
+                                }
+
+                                if (item.CanUndo && !RevertItems.Contains(item))
+                                {
+                                    RevertItems.Add(item);
+                                }
+                            });
                         }
                         else
                         {
@@ -438,9 +463,9 @@ namespace WinDebloat.ViewModels
 
             UpdateMemoryStats();
             UpdateSelectedCount();
-            OnPropertyChanged(nameof(CompletedCount));
-            OnPropertyChanged(nameof(DoneToggleText));
-            RefreshViewFilters();
+            OnPropertyChanged(nameof(RevertTabHeader));
+            OnPropertyChanged(nameof(HasRevertItems));
+            OnPropertyChanged(nameof(HasNoRevertItems));
             IsBusy = false;
             ProgressText = "Done";
 
@@ -450,10 +475,6 @@ namespace WinDebloat.ViewModels
             {
                 AddLog("NOTICE: A system reboot or sign-out is required for Windows Explorer and Start Menu tweaks to take full visual and memory effect.");
             }
-
-            string rebootNotice = rebootRequired 
-                ? "\n\n⚠️ REBOOT REQUIRED:\nOne or more applied items (such as Windows Explorer, Start Menu web search, or shell policies) require a system restart or sign-out to take full visual and memory effect.\n\nWould you like to restart your computer now?"
-                : "";
 
             if (rebootRequired)
             {
@@ -546,7 +567,32 @@ namespace WinDebloat.ViewModels
                 if (ok)
                 {
                     item.IsCompleted = false;
-                    item.StatusMessage = "Restored";
+                    item.StatusMessage = "Ready";
+                    item.IsSelected = false;
+
+                    Application.Current?.Dispatcher?.Invoke(() =>
+                    {
+                        RevertItems.Remove(item);
+                        switch (item.Category)
+                        {
+                            case DebloatCategory.Startup:
+                                StartupItems.Add(item);
+                                break;
+                            case DebloatCategory.BloatwareApp:
+                                BloatwareItems.Add(item);
+                                break;
+                            case DebloatCategory.SystemTweak:
+                                SystemTweakItems.Add(item);
+                                break;
+                            case DebloatCategory.Service:
+                                ServiceItems.Add(item);
+                                break;
+                            case DebloatCategory.UserInstalledApp:
+                                UserAppItems.Add(item);
+                                break;
+                        }
+                    });
+
                     AddLog($"Successfully reverted '{item.Title}'.");
                     ModernDialog.ShowInfo("Item Restored", $"'{item.Title}' was successfully restored to its previous configuration.", ModernDialogType.Success);
                 }
@@ -563,9 +609,9 @@ namespace WinDebloat.ViewModels
             {
                 UpdateMemoryStats();
                 UpdateSelectedCount();
-                OnPropertyChanged(nameof(CompletedCount));
-                OnPropertyChanged(nameof(DoneToggleText));
-                RefreshViewFilters();
+                OnPropertyChanged(nameof(RevertTabHeader));
+                OnPropertyChanged(nameof(HasRevertItems));
+                OnPropertyChanged(nameof(HasNoRevertItems));
                 IsBusy = false;
                 ProgressText = "Ready";
             }
@@ -573,16 +619,16 @@ namespace WinDebloat.ViewModels
 
         public async Task UndoSelectedAsync()
         {
-            var toUndo = AllItems.Where(i => i.IsSelected && i.IsCompleted && i.CanUndo).ToList();
+            var toUndo = RevertItems.Where(i => i.IsSelected && i.CanUndo).ToList();
             if (toUndo.Count == 0)
             {
-                ModernDialog.ShowInfo("No Reversible Items Selected", "Please select one or more completed items that support restoration.", ModernDialogType.Info);
+                ModernDialog.ShowInfo("No Items Selected", "Please select one or more items in the Undo / Revert tab to revert.", ModernDialogType.Info);
                 return;
             }
 
             bool confirm = ModernDialog.ShowConfirm(
                 "Confirm Revert",
-                $"Are you sure you want to revert {toUndo.Count} selected completed item(s)?",
+                $"Are you sure you want to revert {toUndo.Count} selected item(s) back to their active configuration?",
                 confirmText: "↩️ Revert Selected",
                 cancelText: "Cancel",
                 type: ModernDialogType.Warning);
@@ -609,7 +655,32 @@ namespace WinDebloat.ViewModels
                         if (ok)
                         {
                             item.IsCompleted = false;
-                            item.StatusMessage = "Restored";
+                            item.StatusMessage = "Ready";
+                            item.IsSelected = false;
+
+                            Application.Current?.Dispatcher?.Invoke(() =>
+                            {
+                                RevertItems.Remove(item);
+                                switch (item.Category)
+                                {
+                                    case DebloatCategory.Startup:
+                                        StartupItems.Add(item);
+                                        break;
+                                    case DebloatCategory.BloatwareApp:
+                                        BloatwareItems.Add(item);
+                                        break;
+                                    case DebloatCategory.SystemTweak:
+                                        SystemTweakItems.Add(item);
+                                        break;
+                                    case DebloatCategory.Service:
+                                        ServiceItems.Add(item);
+                                        break;
+                                    case DebloatCategory.UserInstalledApp:
+                                        UserAppItems.Add(item);
+                                        break;
+                                }
+                            });
+
                             reverted++;
                         }
                     }
@@ -622,19 +693,19 @@ namespace WinDebloat.ViewModels
 
             UpdateMemoryStats();
             UpdateSelectedCount();
-            OnPropertyChanged(nameof(CompletedCount));
-            OnPropertyChanged(nameof(DoneToggleText));
-            RefreshViewFilters();
+            OnPropertyChanged(nameof(RevertTabHeader));
+            OnPropertyChanged(nameof(HasRevertItems));
+            OnPropertyChanged(nameof(HasNoRevertItems));
             IsBusy = false;
             ProgressText = "Done";
             AddLog($"Finished reverting {reverted} item(s).");
-            ModernDialog.ShowInfo("Revert Complete", $"Successfully reverted {reverted} item(s) back to their previous active configuration.", ModernDialogType.Success);
+            ModernDialog.ShowInfo("Revert Complete", $"Successfully reverted {reverted} item(s) back to their active configuration.", ModernDialogType.Success);
         }
 
         private void AddLog(string message)
         {
             string time = DateTime.Now.ToString("HH:mm:ss");
-            Application.Current.Dispatcher.Invoke(() =>
+            Application.Current?.Dispatcher?.Invoke(() =>
             {
                 Logs.Insert(0, $"[{time}] {message}");
                 if (Logs.Count > 200) Logs.RemoveAt(Logs.Count - 1);

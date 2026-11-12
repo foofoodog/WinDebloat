@@ -20,7 +20,7 @@
 - Live physical RAM consumption, free memory, and utilization percentage gauge.
 - Instant feedback on memory reclaimed after applying debloat actions.
 
-### 🗑️ Catalog of "Known Suspects" (OEM & Consumer Bloat)
+### 🗑️ Bloatware Catalog (OEM & Consumer Bloat)
 - **OEM Preloads**: Automatically detects companion and telemetry software from **HP, Dell, Lenovo, and ASUS** (e.g. *HP Smart, HP Print Companion, Dell Command Update, Dell SupportAssist, Lenovo Vantage, MyASUS*).
 - **Consumer & Ad Preloads**: Identifies preinstalled sponsored app stubs (*TikTok, Instagram, Disney+, Spotify, Clipchamp, casual card games*).
 - **Telemetry & Assistant Apps**: Disables or removes *Connected User Experiences (`DiagTrack`), WAP Push Routing (`dmwappushservice`), Feedback Hub, Tips, Cortana, and Copilot*.
@@ -41,9 +41,10 @@
 - Detects dependent services to prevent system lockups.
 
 ### ↩️ Full Undo & Revert Engine
-- Made a change you want to reverse? Completed items can be restored back to their original configuration at any time.
-- **Card-Level Revert**: Click `↩️ Revert` directly on any completed card.
-- **Batch Revert**: Click `👁️ Show Done` to view completed items, select the ones you want back, and click `↩️ Revert Selected`.
+- Made a change you want to reverse? Completed optimizations, disabled services, and removed startup entries are neatly organized in the dedicated **↩️ Undo / Revert** tab.
+- **Dedicated Tab**: Keeps main debloat candidate views clean and focused, preventing clutter.
+- **Card-Level Revert**: Click `↩️ Revert Change` directly on any item in the Undo tab to restore it.
+- **Batch Revert**: Select multiple items in the Undo tab and click `↩️ Revert Selected` to restore them in one go.
 
 ### 🛡️ Smart Elevation & Modern UI
 - **Elevation When Needed**: Runs in standard mode without forcing UAC upfront; automatically prompts for elevation only when applying actions that require Administrator rights.

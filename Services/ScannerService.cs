@@ -287,7 +287,7 @@ namespace WinDebloat.Services
                         Description = app.Desc,
                         Details = $"Package: {targetId}",
                         EstimatedMemory = app.EstRam,
-                        IsKnownSuspect = true,
+                        IsBloatware = true,
                         IsRecommended = app.Recommended,
                         IsSelected = app.Recommended,
                         ApplyAction = async (progress) =>
@@ -607,6 +607,12 @@ namespace WinDebloat.Services
                     bool isRunning = sc.Status == ServiceControllerStatus.Running;
                     bool isDisabled = sc.StartType == ServiceStartMode.Disabled;
 
+                    // Do not show stopped services as removal candidates if the service is stopped and disabled
+                    if (sc.Status == ServiceControllerStatus.Stopped && isDisabled)
+                    {
+                        continue;
+                    }
+
                     list.Add(new DebloatItem
                     {
                         Id = $"svc_{svc.Name}",
@@ -617,7 +623,7 @@ namespace WinDebloat.Services
                             : $"{svc.Desc} Currently: {statusStr}",
                         Details = $"Service: {svc.Name} | Status: {statusStr} | StartType: {sc.StartType}",
                         EstimatedMemory = svc.EstRam,
-                        IsKnownSuspect = true,
+                        IsBloatware = true,
                         IsRecommended = !isDisabled && svc.Recommended && isRunning,
                         IsSelected = !isDisabled && svc.Recommended && isRunning,
                         IsCompleted = isDisabled,
