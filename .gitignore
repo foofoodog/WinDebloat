@@ -1,0 +1,30 @@
+## Build and output directories
+[Bb]in/
+[Oo]bj/
+publish/
+[Ll]og/
+[Ll]ogs/
+
+## Visual Studio / VS Code
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Rider / ReSharper
+_ReSharper*/
+*.resharper
+*.DotSettings.user
+
+## OS Generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+
+## Package directories
+*.nupkg
+packages/

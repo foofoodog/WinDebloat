@@ -1,0 +1,124 @@
+<Window x:Class="WinDebloat.ModernDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="WinDebloat"
+        SizeToContent="WidthAndHeight"
+        MinWidth="420" MaxWidth="580"
+        WindowStartupLocation="CenterOwner"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ShowInTaskbar="False"
+        FontFamily="Segoe UI">
+    <Border Background="#0F172A" 
+            BorderBrush="#334155" 
+            BorderThickness="1" 
+            CornerRadius="12" 
+            Padding="24"
+            Margin="10">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="24" ShadowDepth="4" Opacity="0.65" Color="#000000"/>
+        </Border.Effect>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Header with Icon & Title -->
+            <Grid Grid.Row="0" Margin="0,0,0,16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Name="IconBadge"
+                        CornerRadius="8" 
+                        Width="42" Height="42" 
+                        Background="#312E81" 
+                        Margin="0,0,14,0" 
+                        VerticalAlignment="Center">
+                    <TextBlock Name="IconText" 
+                               Text="⚡" 
+                               FontSize="20" 
+                               HorizontalAlignment="Center" 
+                               VerticalAlignment="Center"/>
+                </Border>
+
+                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                    <TextBlock Name="TitleText" 
+                               Text="Confirmation" 
+                               FontSize="17" 
+                               FontWeight="Bold" 
+                               Foreground="#F8FAFC"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- Message Body -->
+            <ScrollViewer Grid.Row="1" MaxHeight="320" VerticalScrollBarVisibility="Auto" Margin="0,0,0,22">
+                <TextBlock Name="MessageText" 
+                           Text="Dialog message content" 
+                           Foreground="#CBD5E1" 
+                           FontSize="13.5" 
+                           TextWrapping="Wrap" 
+                           LineHeight="22"/>
+            </ScrollViewer>
+
+            <!-- Buttons Row -->
+            <StackPanel Grid.Row="2" 
+                        Orientation="Horizontal" 
+                        HorizontalAlignment="Right">
+                <!-- Cancel Button -->
+                <Button Name="CancelBtn" 
+                        Content="Cancel" 
+                        Click="CancelBtn_Click" 
+                        Background="Transparent" 
+                        Foreground="#94A3B8" 
+                        Padding="16,8" 
+                        Margin="0,0,10,0" 
+                        FontWeight="SemiBold" 
+                        BorderBrush="#334155" 
+                        BorderThickness="1" 
+                        Cursor="Hand"
+                        Visibility="Collapsed">
+                    <Button.Resources>
+                        <Style TargetType="Border"><Setter Property="CornerRadius" Value="6"/></Style>
+                    </Button.Resources>
+                </Button>
+
+                <!-- Secondary Button -->
+                <Button Name="SecondaryBtn" 
+                        Content="No" 
+                        Click="SecondaryBtn_Click" 
+                        Background="#334155" 
+                        Foreground="#F8FAFC" 
+                        Padding="16,8" 
+                        Margin="0,0,10,0" 
+                        FontWeight="SemiBold" 
+                        BorderThickness="0" 
+                        Cursor="Hand"
+                        Visibility="Collapsed">
+                    <Button.Resources>
+                        <Style TargetType="Border"><Setter Property="CornerRadius" Value="6"/></Style>
+                    </Button.Resources>
+                </Button>
+
+                <!-- Primary Button -->
+                <Button Name="PrimaryBtn" 
+                        Content="OK" 
+                        Click="PrimaryBtn_Click" 
+                        Background="#6366F1" 
+                        Foreground="White" 
+                        Padding="20,8" 
+                        FontWeight="Bold" 
+                        BorderThickness="0" 
+                        Cursor="Hand">
+                    <Button.Resources>
+                        <Style TargetType="Border"><Setter Property="CornerRadius" Value="6"/></Style>
+                    </Button.Resources>
+                </Button>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>
