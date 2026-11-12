@@ -607,8 +607,8 @@ namespace WinDebloat.Services
                     bool isRunning = sc.Status == ServiceControllerStatus.Running;
                     bool isDisabled = sc.StartType == ServiceStartMode.Disabled;
 
-                    // Do not show stopped services as removal candidates if the service is stopped and disabled
-                    if (sc.Status == ServiceControllerStatus.Stopped && isDisabled)
+                    // Only show services that are currently RUNNING and consuming RAM
+                    if (!isRunning || isDisabled)
                     {
                         continue;
                     }
@@ -618,16 +618,14 @@ namespace WinDebloat.Services
                         Id = $"svc_{svc.Name}",
                         Category = DebloatCategory.Service,
                         Title = $"{svc.Title} ({svc.Name})",
-                        Description = isDisabled 
-                            ? $"{svc.Desc} (Already Disabled; Status: {statusStr})" 
-                            : $"{svc.Desc} Currently: {statusStr}",
-                        Details = $"Service: {svc.Name} | Status: {statusStr} | StartType: {sc.StartType}",
+                        Description = $"{svc.Desc} (Currently running in RAM; applying stops and disables service).",
+                        Details = $"Service: {svc.Name} | Status: Running | StartType: {sc.StartType}",
                         EstimatedMemory = svc.EstRam,
                         IsBloatware = true,
-                        IsRecommended = !isDisabled && svc.Recommended && isRunning,
-                        IsSelected = !isDisabled && svc.Recommended && isRunning,
-                        IsCompleted = isDisabled,
-                        StatusMessage = isDisabled ? "Already Disabled" : (isRunning ? "Running" : "Stopped"),
+                        IsRecommended = svc.Recommended,
+                        IsSelected = svc.Recommended,
+                        IsCompleted = false,
+                        StatusMessage = "Running",
                         RequiresAdmin = true,
                         ApplyAction = async (progress) =>
                         {
