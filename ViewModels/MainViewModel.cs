@@ -391,7 +391,7 @@ namespace WinDebloat.ViewModels
             }
             else if (record.RevertType.StartsWith("SystemTweak"))
             {
-                item.RequiresAdmin = record.RevertType.Contains("Chrome") || record.RevertType.Contains("Edge");
+                item.RequiresAdmin = record.RevertType.Contains("Chrome") || record.RevertType.Contains("Edge") || record.RevertType.Contains("TextInputHost");
                 item.UndoAction = async (progress) =>
                 {
                     bool ok = false;
@@ -441,6 +441,15 @@ namespace WinDebloat.ViewModels
                         {
                             SystemHelper.DeleteRegistryValue(RegistryHive.LocalMachine, @"Software\Policies\Microsoft\Edge", "BackgroundModeEnabled");
                             SystemHelper.DeleteRegistryValue(RegistryHive.LocalMachine, @"Software\Policies\Microsoft\Edge", "StartupBoostEnabled");
+                        }
+                        ok = true;
+                    }
+                    else if (record.RevertType == "SystemTweak_TextInputHost" || record.Id == "tweak_disable_text_input_host")
+                    {
+                        progress.Report("Restoring Windows Input Experience (TextInputHost)...");
+                        if (SystemHelper.IsAdministrator())
+                        {
+                            SystemHelper.DeleteRegistryValue(RegistryHive.LocalMachine, @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\TextInputHost.exe", "Debugger");
                         }
                         ok = true;
                     }

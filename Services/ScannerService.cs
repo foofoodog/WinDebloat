@@ -612,6 +612,55 @@ namespace WinDebloat.Services
                 });
             }
 
+            // 6. Disable Windows Input Experience (TextInputHost)
+            const string ifeoKey = @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\TextInputHost.exe";
+            object? ifeoDebugger = SystemHelper.GetRegistryValue(RegistryHive.LocalMachine, ifeoKey, "Debugger");
+            bool textInputDisabled = ifeoDebugger != null && !string.IsNullOrEmpty(ifeoDebugger.ToString());
+
+            list.Add(new DebloatItem
+            {
+                Id = "tweak_disable_text_input_host",
+                Category = DebloatCategory.SystemTweak,
+                Title = "Disable Windows Input Experience (TextInputHost)",
+                Description = textInputDisabled
+                    ? "Prevents TextInputHost.exe from running in the background. (Already disabled)"
+                    : "Prevents TextInputHost.exe from idling in the background and holding ~185 MB of memory. Disables touch keyboard and emoji menu (Win+.).",
+                Details = "IFEO: HKLM\\...\\TextInputHost.exe -> Debugger=systray.exe",
+                EstimatedMemory = "~185 MB",
+                RequiresAdmin = true,
+                IsRecommended = false,
+                IsSelected = false,
+                IsCompleted = textInputDisabled,
+                StatusMessage = textInputDisabled ? "Already Disabled" : "Ready",
+                UndoHistoryEntry = new UndoRecord
+                {
+                    Id = "tweak_disable_text_input_host",
+                    Title = "Disable Windows Input Experience (TextInputHost)",
+                    Description = "Disabled TextInputHost.exe background execution.",
+                    Category = nameof(DebloatCategory.SystemTweak),
+                    RevertType = "SystemTweak_TextInputHost"
+                },
+                ApplyAction = async (progress) =>
+                {
+                    progress.Report("Disabling Windows Input Experience (TextInputHost)...");
+                    bool ok = SystemHelper.SetRegistryString(RegistryHive.LocalMachine, ifeoKey, "Debugger", @"%windir%\System32\systray.exe");
+                    try
+                    {
+                        foreach (var p in Process.GetProcessesByName("TextInputHost")) p.Kill();
+                    }
+                    catch { }
+                    progress.Report("TextInputHost.exe disabled and terminated.");
+                    return ok;
+                },
+                UndoAction = async (progress) =>
+                {
+                    progress.Report("Restoring Windows Input Experience (TextInputHost)...");
+                    bool ok = SystemHelper.DeleteRegistryValue(RegistryHive.LocalMachine, ifeoKey, "Debugger");
+                    progress.Report("TextInputHost.exe restored.");
+                    return ok;
+                }
+            });
+
             return list;
         }
 

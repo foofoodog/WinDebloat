@@ -68,6 +68,7 @@ You can unblock the executable with either method:
 - **Start Menu Web Search**: Prevents `SearchHost.exe` from loading the Edge WebView2 browser engine and sending queries to Bing, speeding up local file/app search.
 - **Windows Widgets & News Feed**: Hides taskbar widget buttons and terminates background feed caching (`MicrosoftStartFeedProvider`).
 - **Browser Background Mode**: Enforces policies stopping Google Chrome and Microsoft Edge from pre-launching stealth background processes or lingering in memory after closure.
+- **Windows Input Experience**: Disables `TextInputHost.exe` from lingering in the background, freeing ~185 MB of RAM (touch keyboard and emoji picker).
 
 ### Windows Services Optimization
 - **Active Running Services Only**: Strictly filters candidate services to those currently running in RAM, eliminating clutter from idle or stopped services.
