@@ -44,10 +44,42 @@ namespace WinDebloat.ViewModels
             ? $"↩️ Undo / Revert ({RevertItems.Count})"
             : "↩️ Undo / Revert";
 
+        public int SystemTweaksSelectedCount => SystemTweakItems.Count(i => i.IsSelected && !i.IsCompleted);
+        public int StartupSelectedCount => StartupItems.Count(i => i.IsSelected && !i.IsCompleted);
+        public int BloatwareSelectedCount => BloatwareItems.Count(i => i.IsSelected && !i.IsCompleted);
+        public int ServicesSelectedCount => ServiceItems.Count(i => i.IsSelected && !i.IsCompleted);
+        public int UserAppsSelectedCount => UserAppItems.Count(i => i.IsSelected && !i.IsCompleted);
+
+        public string SystemTweaksTabHeader => SystemTweaksSelectedCount > 0
+            ? $"⚡ System Tweaks ({SystemTweaksSelectedCount})"
+            : "⚡ System Tweaks";
+
+        public string StartupTabHeader => StartupSelectedCount > 0
+            ? $"🚀 Startup Apps ({StartupSelectedCount})"
+            : "🚀 Startup Apps";
+
+        public string BloatwareTabHeader => BloatwareSelectedCount > 0
+            ? $"🗑️ Bloatware ({BloatwareSelectedCount})"
+            : "🗑️ Bloatware";
+
+        public string ServicesTabHeader => ServicesSelectedCount > 0
+            ? $"⚙️ Windows Services ({ServicesSelectedCount})"
+            : "⚙️ Windows Services";
+
+        public string UserAppsTabHeader => UserAppsSelectedCount > 0
+            ? $"📦 User Installed Apps ({UserAppsSelectedCount})"
+            : "📦 User Installed Apps";
+
         public bool IsBusy
         {
             get => _isBusy;
-            set { _isBusy = value; OnPropertyChanged(); }
+            set 
+            { 
+                _isBusy = value; 
+                OnPropertyChanged(); 
+                OnPropertyChanged(nameof(CanApplySelected));
+                ApplySelectedCommand?.RaiseCanExecuteChanged();
+            }
         }
 
         public string ProgressText
@@ -102,11 +134,13 @@ namespace WinDebloat.ViewModels
             set { _selectedCount = value; OnPropertyChanged(); }
         }
 
+        public bool CanApplySelected => !IsBusy && SelectedCount > 0;
+
         public ICommand RefreshCommand { get; }
         public ICommand SelectRecommendedCommand { get; }
         public ICommand SelectAllCommand { get; }
         public ICommand DeselectAllCommand { get; }
-        public ICommand ApplySelectedCommand { get; }
+        public RelayCommand ApplySelectedCommand { get; }
         public ICommand RelaunchAdminCommand { get; }
         public ICommand CreateRestorePointCommand { get; }
         public ICommand UndoItemCommand { get; }
@@ -435,6 +469,18 @@ namespace WinDebloat.ViewModels
         private void UpdateSelectedCount()
         {
             SelectedCount = AllItems.Count(i => i.IsSelected && !i.IsCompleted);
+            OnPropertyChanged(nameof(CanApplySelected));
+            OnPropertyChanged(nameof(SystemTweaksSelectedCount));
+            OnPropertyChanged(nameof(StartupSelectedCount));
+            OnPropertyChanged(nameof(BloatwareSelectedCount));
+            OnPropertyChanged(nameof(ServicesSelectedCount));
+            OnPropertyChanged(nameof(UserAppsSelectedCount));
+            OnPropertyChanged(nameof(SystemTweaksTabHeader));
+            OnPropertyChanged(nameof(StartupTabHeader));
+            OnPropertyChanged(nameof(BloatwareTabHeader));
+            OnPropertyChanged(nameof(ServicesTabHeader));
+            OnPropertyChanged(nameof(UserAppsTabHeader));
+            ApplySelectedCommand?.RaiseCanExecuteChanged();
         }
 
         private void SelectRecommended()

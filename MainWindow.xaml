@@ -572,35 +572,35 @@
                     BorderThickness="0" 
                     Margin="0,0,0,12">
             <!-- System Tweaks Tab -->
-            <TabItem Header="⚡ System Tweaks">
+            <TabItem Header="{Binding SystemTweaksTabHeader}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,12,0,0">
                     <ItemsControl ItemsSource="{Binding SystemTweakItems}" ItemTemplate="{StaticResource DebloatItemTemplate}"/>
                 </ScrollViewer>
             </TabItem>
 
             <!-- Startup Apps Tab -->
-            <TabItem Header="🚀 Startup Apps">
+            <TabItem Header="{Binding StartupTabHeader}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,12,0,0">
                     <ItemsControl ItemsSource="{Binding StartupItems}" ItemTemplate="{StaticResource DebloatItemTemplate}"/>
                 </ScrollViewer>
             </TabItem>
 
             <!-- Bloatware Tab -->
-            <TabItem Header="🗑️ Bloatware">
+            <TabItem Header="{Binding BloatwareTabHeader}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,12,0,0">
                     <ItemsControl ItemsSource="{Binding BloatwareItems}" ItemTemplate="{StaticResource DebloatItemTemplate}"/>
                 </ScrollViewer>
             </TabItem>
 
             <!-- Windows Services Tab -->
-            <TabItem Header="⚙️ Windows Services">
+            <TabItem Header="{Binding ServicesTabHeader}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,12,0,0">
                     <ItemsControl ItemsSource="{Binding ServiceItems}" ItemTemplate="{StaticResource DebloatItemTemplate}"/>
                 </ScrollViewer>
             </TabItem>
 
             <!-- User Installed Apps Tab -->
-            <TabItem Header="📦 User Installed Apps">
+            <TabItem Header="{Binding UserAppsTabHeader}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,12,0,0">
                     <ItemsControl ItemsSource="{Binding UserAppItems}" ItemTemplate="{StaticResource DebloatItemTemplate}"/>
                 </ScrollViewer>
@@ -753,6 +753,7 @@
 
                 <Button Grid.Column="2" 
                         Command="{Binding ApplySelectedCommand}" 
+                        IsEnabled="{Binding CanApplySelected, Mode=OneWay}"
                         Style="{StaticResource PrimaryActionButtonStyle}">
                     <TextBlock>
                         <Run Text="⚡ Apply Selected ("/>
