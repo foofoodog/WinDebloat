@@ -237,6 +237,20 @@
                                            FontWeight="Bold" 
                                            Foreground="#93C5FD"/>
                             </Border>
+
+                            <!-- Startup Status Tag -->
+                            <Border Background="#334155" 
+                                    BorderBrush="#475569"
+                                    BorderThickness="1"
+                                    CornerRadius="4" 
+                                    Padding="6,2" 
+                                    Margin="8,0,0,0"
+                                    Visibility="{Binding HasStartupStatus, Converter={StaticResource BoolToVis}}">
+                                <TextBlock Text="{Binding StartupStatus}" 
+                                           FontSize="10" 
+                                           FontWeight="Bold" 
+                                           Foreground="#CBD5E1"/>
+                            </Border>
                         </StackPanel>
 
                         <TextBlock Text="{Binding Description}" 
@@ -273,6 +287,25 @@
                                    FontSize="11" 
                                    HorizontalAlignment="Right" 
                                    Margin="0,4,0,0"/>
+
+                        <Button Command="{Binding DataContext.ShowDetailsCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                CommandParameter="{Binding}"
+                                ToolTip="View feature details, technical effects, consequences, and documentation link"
+                                Background="#1E293B" 
+                                Foreground="#38BDF8" 
+                                BorderBrush="#0284C7" 
+                                BorderThickness="1" 
+                                FontWeight="SemiBold" 
+                                FontSize="11" 
+                                Padding="8,3" 
+                                Margin="0,6,0,0"
+                                HorizontalAlignment="Right"
+                                Cursor="Hand">
+                            <Button.Resources>
+                                <Style TargetType="Border"><Setter Property="CornerRadius" Value="4"/></Style>
+                            </Button.Resources>
+                            <TextBlock Text="ℹ️ Details"/>
+                        </Button>
                     </StackPanel>
                 </Grid>
             </Border>
@@ -370,6 +403,24 @@
                             <Button.Resources>
                                 <Style TargetType="Border"><Setter Property="CornerRadius" Value="6"/></Style>
                             </Button.Resources>
+                        </Button>
+                        <Button Command="{Binding DataContext.ShowDetailsCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                CommandParameter="{Binding}"
+                                ToolTip="View feature details, technical effects, and consequences"
+                                Background="#1E293B" 
+                                Foreground="#38BDF8" 
+                                BorderBrush="#0284C7" 
+                                BorderThickness="1" 
+                                FontWeight="SemiBold" 
+                                FontSize="11" 
+                                Padding="8,3" 
+                                Margin="0,5,0,0"
+                                HorizontalAlignment="Right"
+                                Cursor="Hand">
+                            <Button.Resources>
+                                <Style TargetType="Border"><Setter Property="CornerRadius" Value="4"/></Style>
+                            </Button.Resources>
+                            <TextBlock Text="ℹ️ Details"/>
                         </Button>
                         <TextBlock Text="{Binding StatusMessage}" 
                                    Foreground="#64748B" 
@@ -538,11 +589,29 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <TextBlock Text="🧠 Physical Memory Usage" 
                                    FontWeight="SemiBold" 
                                    FontSize="15" 
-                                   Foreground="#F8FAFC"/>
+                                   Foreground="#F8FAFC"
+                                   VerticalAlignment="Center"/>
+                        <Button Command="{Binding TrimRamCommand}"
+                                ToolTip="Flush idle process working sets to reclaim dormant physical RAM"
+                                Background="#1E293B" 
+                                Foreground="#38BDF8" 
+                                BorderBrush="#0284C7" 
+                                BorderThickness="1" 
+                                FontWeight="SemiBold" 
+                                FontSize="11" 
+                                Padding="8,3" 
+                                Margin="14,0,0,0"
+                                Cursor="Hand"
+                                VerticalAlignment="Center">
+                            <Button.Resources>
+                                <Style TargetType="Border"><Setter Property="CornerRadius" Value="4"/></Style>
+                            </Button.Resources>
+                            <TextBlock Text="🧹 Trim Working Set"/>
+                        </Button>
                     </StackPanel>
 
                     <StackPanel Grid.Column="2" Orientation="Horizontal">

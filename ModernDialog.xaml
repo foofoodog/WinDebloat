@@ -78,59 +78,83 @@
                          Visibility="Collapsed"/>
 
             <!-- Buttons Row -->
-            <StackPanel Grid.Row="2" 
-                        Orientation="Horizontal" 
-                        HorizontalAlignment="Right">
-                <!-- Cancel Button -->
-                <Button Name="CancelBtn" 
-                        Content="Cancel" 
-                        Click="CancelBtn_Click" 
-                        Background="Transparent" 
-                        Foreground="#94A3B8" 
-                        Padding="16,8" 
-                        Margin="0,0,10,0" 
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Help / Documentation Link Button -->
+                <Button Name="DocBtn" 
+                        Click="DocBtn_Click" 
+                        Background="#1E293B" 
+                        Foreground="#38BDF8" 
+                        Padding="14,8" 
                         FontWeight="SemiBold" 
-                        BorderBrush="#334155" 
+                        BorderBrush="#0284C7" 
                         BorderThickness="1" 
                         Cursor="Hand"
                         Visibility="Collapsed">
                     <Button.Resources>
                         <Style TargetType="Border"><Setter Property="CornerRadius" Value="6"/></Style>
                     </Button.Resources>
+                    <TextBlock Text="🌐 Learn More Online"/>
                 </Button>
 
-                <!-- Secondary Button -->
-                <Button Name="SecondaryBtn" 
-                        Content="No" 
-                        Click="SecondaryBtn_Click" 
-                        Background="#334155" 
-                        Foreground="#F8FAFC" 
-                        Padding="16,8" 
-                        Margin="0,0,10,0" 
-                        FontWeight="SemiBold" 
-                        BorderThickness="0" 
-                        Cursor="Hand"
-                        Visibility="Collapsed">
-                    <Button.Resources>
-                        <Style TargetType="Border"><Setter Property="CornerRadius" Value="6"/></Style>
-                    </Button.Resources>
-                </Button>
+                <StackPanel Grid.Column="1" 
+                            Orientation="Horizontal" 
+                            HorizontalAlignment="Right">
+                    <!-- Cancel Button -->
+                    <Button Name="CancelBtn" 
+                            Content="Cancel" 
+                            Click="CancelBtn_Click" 
+                            Background="Transparent" 
+                            Foreground="#94A3B8" 
+                            Padding="16,8" 
+                            Margin="0,0,10,0" 
+                            FontWeight="SemiBold" 
+                            BorderBrush="#334155" 
+                            BorderThickness="1" 
+                            Cursor="Hand"
+                            Visibility="Collapsed">
+                        <Button.Resources>
+                            <Style TargetType="Border"><Setter Property="CornerRadius" Value="6"/></Style>
+                        </Button.Resources>
+                    </Button>
 
-                <!-- Primary Button -->
-                <Button Name="PrimaryBtn" 
-                        Content="OK" 
-                        Click="PrimaryBtn_Click" 
-                        Background="#6366F1" 
-                        Foreground="White" 
-                        Padding="20,8" 
-                        FontWeight="Bold" 
-                        BorderThickness="0" 
-                        Cursor="Hand">
-                    <Button.Resources>
-                        <Style TargetType="Border"><Setter Property="CornerRadius" Value="6"/></Style>
-                    </Button.Resources>
-                </Button>
-            </StackPanel>
+                    <!-- Secondary Button -->
+                    <Button Name="SecondaryBtn" 
+                            Content="No" 
+                            Click="SecondaryBtn_Click" 
+                            Background="#334155" 
+                            Foreground="#F8FAFC" 
+                            Padding="16,8" 
+                            Margin="0,0,10,0" 
+                            FontWeight="SemiBold" 
+                            BorderThickness="0" 
+                            Cursor="Hand"
+                            Visibility="Collapsed">
+                        <Button.Resources>
+                            <Style TargetType="Border"><Setter Property="CornerRadius" Value="6"/></Style>
+                        </Button.Resources>
+                    </Button>
+
+                    <!-- Primary Button -->
+                    <Button Name="PrimaryBtn" 
+                            Content="OK" 
+                            Click="PrimaryBtn_Click" 
+                            Background="#6366F1" 
+                            Foreground="White" 
+                            Padding="20,8" 
+                            FontWeight="Bold" 
+                            BorderThickness="0" 
+                            Cursor="Hand">
+                        <Button.Resources>
+                            <Style TargetType="Border"><Setter Property="CornerRadius" Value="6"/></Style>
+                        </Button.Resources>
+                    </Button>
+                </StackPanel>
+            </Grid>
         </Grid>
     </Border>
 </Window>

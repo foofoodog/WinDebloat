@@ -36,6 +36,44 @@ namespace WinDebloat.Services
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool GlobalMemoryStatusEx([In, Out] MEMORYSTATUSEX lpBuffer);
 
+        [DllImport("psapi.dll", SetLastError = true)]
+        private static extern int EmptyWorkingSet(IntPtr hProcess);
+
+        public static (int processesTrimmed, double reclaimedMB) TrimWorkingSetMemory()
+        {
+            var before = GetMemoryInfo();
+            int trimmed = 0;
+            int currentSession = -1;
+            try { currentSession = Process.GetCurrentProcess().SessionId; } catch { }
+
+            foreach (var proc in Process.GetProcesses())
+            {
+                try
+                {
+                    if (proc.Id <= 4 || proc.Id == Environment.ProcessId) continue;
+                    if (currentSession != -1 && proc.SessionId != currentSession && !IsAdministrator()) continue;
+
+                    int res = EmptyWorkingSet(proc.Handle);
+                    if (res != 0)
+                    {
+                        trimmed++;
+                    }
+                }
+                catch
+                {
+                    // Ignore processes without permissions
+                }
+                finally
+                {
+                    try { proc.Dispose(); } catch { }
+                }
+            }
+
+            var after = GetMemoryInfo();
+            double reclaimed = Math.Max(0.0, Math.Round((before.UsedGB - after.UsedGB) * 1024.0, 1));
+            return (trimmed, reclaimed);
+        }
+
         public static MemoryInfo GetMemoryInfo()
         {
             var memStatus = new MEMORYSTATUSEX();

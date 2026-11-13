@@ -26,6 +26,9 @@ namespace WinDebloat.Models
         public string Description { get; set; } = string.Empty;
         public string Details { get; set; } = string.Empty;
         public string EstimatedMemory { get; set; } = string.Empty;
+        public string Consequences { get; set; } = string.Empty;
+        public string HelpUrl { get; set; } = string.Empty;
+        public string StartupStatus { get; set; } = string.Empty;
         public DebloatCategory Category { get; set; }
         public bool IsRecommended { get; set; }
         public bool RequiresAdmin { get; set; }
@@ -34,6 +37,11 @@ namespace WinDebloat.Models
         public bool IsKnownSuspect { get => IsBloatware; set => IsBloatware = value; }
         public object? Tag { get; set; }
         public UndoRecord? UndoHistoryEntry { get; set; }
+
+        public bool HasHelpUrl => !string.IsNullOrWhiteSpace(HelpUrl);
+        public bool HasConsequences => !string.IsNullOrWhiteSpace(Consequences);
+        public bool HasStartupStatus => !string.IsNullOrWhiteSpace(StartupStatus);
+        public bool IsStartupDisabled => string.Equals(StartupStatus, "Disabled in Task Manager", StringComparison.OrdinalIgnoreCase);
 
         public bool IsSelected
         {

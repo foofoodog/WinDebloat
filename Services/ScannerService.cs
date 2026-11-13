@@ -23,7 +23,7 @@ namespace WinDebloat.Services
             items.AddRange(await ScanAppxPackagesAsync());
 
             // 3. System Tweaks
-            items.AddRange(ScanSystemTweaks());
+            items.AddRange(await ScanSystemTweaksAsync());
 
             // 4. Windows Services
             items.AddRange(ScanWindowsServices());
@@ -102,6 +102,22 @@ namespace WinDebloat.Services
 
                         string currentValName = valName;
                         string originalCmd = command;
+
+                        string startupStatus = "Enabled";
+                        try
+                        {
+                            using var approvedKey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run");
+                            if (approvedKey != null)
+                            {
+                                var bytes = approvedKey.GetValue(valName) as byte[];
+                                if (bytes != null && bytes.Length > 0 && (bytes[0] == 0x03 || bytes[0] == 0x01))
+                                {
+                                    startupStatus = "Disabled in Task Manager";
+                                }
+                            }
+                        }
+                        catch { }
+
                         list.Add(new DebloatItem
                         {
                             Id = $"startup_hkcu_{currentValName}",
@@ -110,8 +126,11 @@ namespace WinDebloat.Services
                             Description = "Starts automatically in the background at user login.",
                             Details = $"Registry: HKCU\\...\\Run -> \"{currentValName}\" = {command}",
                             EstimatedMemory = estRam,
-                            IsRecommended = recommended,
-                            IsSelected = recommended,
+                            StartupStatus = startupStatus,
+                            Consequences = "Prevents this application from starting automatically when Windows boots. You can still launch it manually from the Start menu or desktop at any time.",
+                            HelpUrl = "https://support.microsoft.com/en-us/windows/change-which-apps-run-automatically-at-startup-in-windows-e030b74c-8bc1-4604-d459-ae3cb0d69492",
+                            IsRecommended = recommended && startupStatus != "Disabled in Task Manager",
+                            IsSelected = recommended && startupStatus != "Disabled in Task Manager",
                             Tag = originalCmd,
                             UndoHistoryEntry = new UndoRecord
                             {
@@ -163,6 +182,8 @@ namespace WinDebloat.Services
                         Description = "Shortcut located in User Startup folder.",
                         Details = file,
                         EstimatedMemory = "~50 MB",
+                        Consequences = "Deletes the startup shortcut from your user Startup folder so this program won't start automatically on boot. The installed application is not deleted and can still be run manually.",
+                        HelpUrl = "https://support.microsoft.com/en-us/windows/change-which-apps-run-automatically-at-startup-in-windows-e030b74c-8bc1-4604-d459-ae3cb0d69492",
                         IsRecommended = true,
                         IsSelected = true,
                         ApplyAction = async (progress) =>
@@ -199,6 +220,8 @@ namespace WinDebloat.Services
                         Description = "Shortcut located in Common Startup folder.",
                         Details = file,
                         EstimatedMemory = "~70 MB",
+                        Consequences = "Deletes the startup shortcut from the All-Users Common Startup folder so this program won't start automatically for any user on boot. The installed application is not deleted.",
+                        HelpUrl = "https://support.microsoft.com/en-us/windows/change-which-apps-run-automatically-at-startup-in-windows-e030b74c-8bc1-4604-d459-ae3cb0d69492",
                         IsRecommended = false,
                         IsSelected = false,
                         RequiresAdmin = true,
@@ -299,6 +322,8 @@ namespace WinDebloat.Services
                         Details = $"Package: {targetId}",
                         EstimatedMemory = app.EstRam,
                         IsBloatware = true,
+                        Consequences = "Uninstalls this application for the current user and unprovisions it from the system. You can easily reinstall it anytime from the Microsoft Store or restore it using WinDebloat's Undo center.",
+                        HelpUrl = "https://support.microsoft.com/en-us/windows/uninstall-or-remove-apps-and-programs-in-windows-4b55f974-2cc6-2d2b-d092-59590861cd08",
                         IsRecommended = app.Recommended,
                         IsSelected = app.Recommended,
                         ApplyAction = async (progress) =>
@@ -326,7 +351,7 @@ namespace WinDebloat.Services
             return list;
         }
 
-        public List<DebloatItem> ScanSystemTweaks()
+        public async Task<List<DebloatItem>> ScanSystemTweaksAsync()
         {
             var list = new List<DebloatItem>();
 
@@ -347,6 +372,8 @@ namespace WinDebloat.Services
                 Details = "HKCU/HKLM\\...\\Explorer -> DisableSearchBoxSuggestions=1, BingSearchEnabled=0, DisableWebSearch=1",
                 EstimatedMemory = "~350 MB",
                 RequiresReboot = true,
+                Consequences = "Disables Bing internet search suggestions in the Windows Start menu search box. Only local files, apps, and settings on your PC will appear in search results (which makes search noticeably faster and stops SearchHost from loading Edge WebView2 into RAM).",
+                HelpUrl = "https://support.microsoft.com/en-us/windows/search-for-anything-anywhere-82730eb7-8149-411a-8db4-d5764e9a8966",
                 IsRecommended = !bingApplied,
                 IsSelected = !bingApplied,
                 IsCompleted = bingApplied,
@@ -423,6 +450,8 @@ namespace WinDebloat.Services
                 Details = "HKCU\\...\\Explorer\\Advanced -> TaskbarDa=0; HKLM/HKCU Policies -> AllowNewsAndInterests=0",
                 EstimatedMemory = "~60 MB",
                 RequiresReboot = true,
+                Consequences = "Hides the taskbar Widgets icon and prevents Windows from pre-loading and caching MSN news, weather, and traffic feeds in memory.",
+                HelpUrl = "https://support.microsoft.com/en-us/windows/stay-up-to-date-with-widgets-7ba79aaa-82f4-42b5-bb35-512c1409f984",
                 IsRecommended = !widgetsApplied,
                 IsSelected = !widgetsApplied,
                 IsCompleted = widgetsApplied,
@@ -485,6 +514,8 @@ namespace WinDebloat.Services
                     : "Ensures Chrome releases all RAM and closes background extension processes when the last window is closed.",
                 Details = "HKCU\\Software\\Policies\\Google\\Chrome -> BackgroundModeEnabled=0",
                 EstimatedMemory = "~150 MB",
+                Consequences = "Forces Google Chrome to fully exit and free all RAM when its last window is closed, rather than staying resident in the background for extensions or quick launch.",
+                HelpUrl = "https://support.google.com/chrome/answer/1184722",
                 IsRecommended = !chromeApplied,
                 IsSelected = !chromeApplied,
                 IsCompleted = chromeApplied,
@@ -539,6 +570,8 @@ namespace WinDebloat.Services
                 Details = "HKCU\\Software\\Policies\\Microsoft\\Edge -> StartupBoostEnabled=0, BackgroundModeEnabled=0",
                 EstimatedMemory = "~120 MB",
                 RequiresReboot = true,
+                Consequences = "Prevents Microsoft Edge from running stealth background processes or pre-loading during Windows boot (Startup Boost), freeing RAM for your active applications.",
+                HelpUrl = "https://learn.microsoft.com/en-us/deployedge/microsoft-edge-policies#backgroundmodeenabled",
                 IsRecommended = !edgeApplied,
                 IsSelected = !edgeApplied,
                 IsCompleted = edgeApplied,
@@ -591,6 +624,8 @@ namespace WinDebloat.Services
                     Description = "Microsoft.CmdPal.UI is currently running in the background and holding ~206 MB of memory.",
                     Details = "Process: Microsoft.CmdPal.UI.exe",
                     EstimatedMemory = "~206 MB",
+                    Consequences = "Terminates the PowerToys Microsoft Command Palette background host. You can re-open it at any time using your configured shortcut.",
+                    HelpUrl = "https://learn.microsoft.com/en-us/windows/powertoys/",
                     IsRecommended = true,
                     IsSelected = true,
                     ApplyAction = async (progress) =>
@@ -628,6 +663,8 @@ namespace WinDebloat.Services
                 Details = "IFEO: HKLM\\...\\TextInputHost.exe -> Debugger=systray.exe",
                 EstimatedMemory = "~185 MB",
                 RequiresAdmin = true,
+                Consequences = "Disables TextInputHost.exe via Image File Execution Options. Note: Disabling this will prevent the touch keyboard and Windows emoji picker shortcut (Win + .) from appearing.",
+                HelpUrl = "https://support.microsoft.com/en-us/windows/windows-keyboard-tips-and-tricks-588e0b72-0fff-6d3f-aeee-6e5116097942",
                 IsRecommended = false,
                 IsSelected = false,
                 IsCompleted = textInputDisabled,
@@ -661,6 +698,194 @@ namespace WinDebloat.Services
                 }
             });
 
+            // 7. Ghost / Orphaned Browser Cleaner
+            int ghostChromeCount = 0;
+            int ghostEdgeCount = 0;
+            try
+            {
+                ghostChromeCount = Process.GetProcessesByName("chrome").Count(p => p.MainWindowHandle == IntPtr.Zero);
+                ghostEdgeCount = Process.GetProcessesByName("msedge").Count(p => p.MainWindowHandle == IntPtr.Zero);
+            }
+            catch { }
+
+            if (ghostChromeCount > 0 || ghostEdgeCount > 0)
+            {
+                list.Add(new DebloatItem
+                {
+                    Id = "tweak_kill_ghost_browsers",
+                    Category = DebloatCategory.SystemTweak,
+                    Title = "Clean Ghost / Orphaned Browser Processes",
+                    Description = $"Detected background headless browser processes ({ghostChromeCount} Chrome, {ghostEdgeCount} Edge) lingering in RAM without open browser windows.",
+                    Details = "Terminates headless background chrome.exe and msedge.exe processes that persist after windows are closed.",
+                    EstimatedMemory = "~200-600 MB",
+                    IsRecommended = true,
+                    IsSelected = true,
+                    Consequences = "Terminates lingering background chrome.exe and msedge.exe processes that have no visible windows, freeing occupied RAM.",
+                    HelpUrl = "https://support.google.com/chrome/answer/1184722",
+                    ApplyAction = async (progress) =>
+                    {
+                        progress.Report("Scanning for orphaned background browser processes...");
+                        int killed = 0;
+                        long bytesFreed = 0;
+                        foreach (var name in new[] { "chrome", "msedge" })
+                        {
+                            foreach (var p in Process.GetProcessesByName(name))
+                            {
+                                try
+                                {
+                                    if (p.MainWindowHandle == IntPtr.Zero)
+                                    {
+                                        bytesFreed += p.WorkingSet64;
+                                        p.Kill();
+                                        killed++;
+                                    }
+                                }
+                                catch { }
+                                finally { try { p.Dispose(); } catch { } }
+                            }
+                        }
+                        double mb = Math.Round(bytesFreed / (1024.0 * 1024.0), 1);
+                        progress.Report($"Terminated {killed} headless browser processes, freeing ~{mb} MB RAM.");
+                        return true;
+                    }
+                });
+            }
+
+            // 8. Telemetry Scheduled Tasks
+            bool telemetryTasksDisabled = false;
+            try
+            {
+                var (success, stdout) = await SystemHelper.RunProcessAsync("schtasks.exe", @"/query /tn ""\Microsoft\Windows\Customer Experience Improvement Program\Consolidator"" /fo csv /nh");
+                if (success && stdout.Contains("Disabled", StringComparison.OrdinalIgnoreCase))
+                {
+                    telemetryTasksDisabled = true;
+                }
+            }
+            catch { }
+
+            list.Add(new DebloatItem
+            {
+                Id = "tweak_disable_telemetry_tasks",
+                Category = DebloatCategory.SystemTweak,
+                Title = "Disable Telemetry & Diagnostic Scheduled Tasks",
+                Description = telemetryTasksDisabled
+                    ? "Prevents background compatibility scans and diagnostic telemetry tasks. (Already disabled)"
+                    : "Disables scheduled background tasks (Compatibility Appraiser, ProgramDataUpdater, Consolidator, UsbCeip) that wake the CPU and scan disks.",
+                Details = @"Tasks: \Microsoft\Windows\Application Experience & CEIP tasks disabled via schtasks",
+                EstimatedMemory = "~45 MB (CPU/Disk Spikes)",
+                RequiresAdmin = true,
+                IsRecommended = !telemetryTasksDisabled,
+                IsSelected = !telemetryTasksDisabled,
+                IsCompleted = telemetryTasksDisabled,
+                StatusMessage = telemetryTasksDisabled ? "Already Disabled" : "Ready",
+                Consequences = "Stops Windows from periodically scanning your hardware, device drivers, and installed software to report diagnostic compatibility telemetry to Microsoft. Does not interfere with Windows Updates.",
+                HelpUrl = "https://learn.microsoft.com/en-us/windows/privacy/manage-connections-from-windows-operating-system-components-to-microsoft-services",
+                UndoHistoryEntry = new UndoRecord
+                {
+                    Id = "tweak_disable_telemetry_tasks",
+                    Title = "Disable Telemetry & Diagnostic Scheduled Tasks",
+                    Description = "Disabled scheduled telemetry tasks in Application Experience and CEIP.",
+                    Category = nameof(DebloatCategory.SystemTweak),
+                    RevertType = "SystemTweak_TelemetryTasks"
+                },
+                ApplyAction = async (progress) =>
+                {
+                    progress.Report("Disabling telemetry scheduled tasks...");
+                    string[] tasks = new[]
+                    {
+                        @"\Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser Exp",
+                        @"\Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser",
+                        @"\Microsoft\Windows\Application Experience\ProgramDataUpdater",
+                        @"\Microsoft\Windows\Customer Experience Improvement Program\Consolidator",
+                        @"\Microsoft\Windows\Customer Experience Improvement Program\UsbCeip"
+                    };
+                    foreach (var t in tasks)
+                    {
+                        progress.Report($"Disabling task: {t}...");
+                        await SystemHelper.RunProcessAsync("schtasks.exe", $@"/change /tn ""{t}"" /disable", elevated: true);
+                    }
+                    progress.Report("Telemetry scheduled tasks disabled.");
+                    return true;
+                },
+                UndoAction = async (progress) =>
+                {
+                    progress.Report("Re-enabling telemetry scheduled tasks...");
+                    string[] tasks = new[]
+                    {
+                        @"\Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser Exp",
+                        @"\Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser",
+                        @"\Microsoft\Windows\Application Experience\ProgramDataUpdater",
+                        @"\Microsoft\Windows\Customer Experience Improvement Program\Consolidator",
+                        @"\Microsoft\Windows\Customer Experience Improvement Program\UsbCeip"
+                    };
+                    foreach (var t in tasks)
+                    {
+                        progress.Report($"Enabling task: {t}...");
+                        await SystemHelper.RunProcessAsync("schtasks.exe", $@"/change /tn ""{t}"" /enable", elevated: true);
+                    }
+                    progress.Report("Telemetry scheduled tasks re-enabled.");
+                    return true;
+                }
+            });
+
+            // 9. Cross-Device Experience (Phone Link background sync host)
+            object? cdVal = SystemHelper.GetRegistryValue(RegistryHive.CurrentUser, @"Software\Policies\Microsoft\Windows\CrossDevice", "DisableCrossDeviceExperience")
+                         ?? SystemHelper.GetRegistryValue(RegistryHive.LocalMachine, @"Software\Policies\Microsoft\Windows\CrossDevice", "DisableCrossDeviceExperience");
+            bool cdDisabled = cdVal is int cdi && cdi == 1;
+
+            list.Add(new DebloatItem
+            {
+                Id = "tweak_disable_cross_device",
+                Category = DebloatCategory.SystemTweak,
+                Title = "Disable Cross-Device Experience (Phone Link Sync)",
+                Description = cdDisabled
+                    ? "Prevents CrossDeviceResume.exe and phone link background syncing. (Already disabled)"
+                    : "Stops CrossDeviceResume.exe from lingering in RAM to sync phone notifications, clipboard, and browser handoff.",
+                Details = @"HKCU/HKLM\Software\Policies\Microsoft\Windows\CrossDevice -> DisableCrossDeviceExperience=1",
+                EstimatedMemory = "~65 MB",
+                IsRecommended = !cdDisabled,
+                IsSelected = !cdDisabled,
+                IsCompleted = cdDisabled,
+                StatusMessage = cdDisabled ? "Already Disabled" : "Ready",
+                Consequences = "Disables background phone syncing and cross-device resume (e.g., continuing browsing tabs or receiving calls from Android/iOS on PC).",
+                HelpUrl = "https://support.microsoft.com/en-us/topic/phone-link-requirements-and-setup-cd2a59f4-18f4-42f2-8958-5d512a83214b",
+                UndoHistoryEntry = new UndoRecord
+                {
+                    Id = "tweak_disable_cross_device",
+                    Title = "Disable Cross-Device Experience",
+                    Description = "Disabled CrossDeviceResume.exe background execution.",
+                    Category = nameof(DebloatCategory.SystemTweak),
+                    RevertType = "SystemTweak_CrossDevice"
+                },
+                ApplyAction = async (progress) =>
+                {
+                    progress.Report("Disabling Cross-Device Experience...");
+                    SystemHelper.SetRegistryDWord(RegistryHive.CurrentUser, @"Software\Policies\Microsoft\Windows\CrossDevice", "DisableCrossDeviceExperience", 1);
+                    if (SystemHelper.IsAdministrator())
+                    {
+                        SystemHelper.SetRegistryDWord(RegistryHive.LocalMachine, @"Software\Policies\Microsoft\Windows\CrossDevice", "DisableCrossDeviceExperience", 1);
+                    }
+                    try
+                    {
+                        foreach (var p in Process.GetProcessesByName("CrossDeviceResume")) p.Kill();
+                    }
+                    catch { }
+                    progress.Report("Cross-Device Experience disabled.");
+                    return true;
+                },
+                UndoAction = async (progress) =>
+                {
+                    progress.Report("Re-enabling Cross-Device Experience...");
+                    SystemHelper.DeleteRegistryValue(RegistryHive.CurrentUser, @"Software\Policies\Microsoft\Windows\CrossDevice", "DisableCrossDeviceExperience");
+                    if (SystemHelper.IsAdministrator())
+                    {
+                        SystemHelper.DeleteRegistryValue(RegistryHive.LocalMachine, @"Software\Policies\Microsoft\Windows\CrossDevice", "DisableCrossDeviceExperience");
+                    }
+                    progress.Report("Cross-Device Experience re-enabled.");
+                    return true;
+                }
+            });
+
             return list;
         }
 
@@ -671,31 +896,167 @@ namespace WinDebloat.Services
             var serviceConfigs = new[]
             {
                 // Telemetry & Diagnostic tracking
-                new { Name = "DiagTrack", Title = "Connected User Experiences & Telemetry", EstRam = "~58 MB", Desc = "Gathers system telemetry and user diagnostics.", Recommended = true },
-                new { Name = "dmwappushservice", Title = "WAP Push Telemetry Routing Service", EstRam = "~20 MB", Desc = "Routes telemetry collection messages in background.", Recommended = true },
-                new { Name = "InventorySvc", Title = "Windows Compatibility & Inventory Appraisal", EstRam = "~28 MB", Desc = "Scans installed applications and hardware compatibility, transmitting telemetry to Microsoft.", Recommended = true },
-                new { Name = "DPS", Title = "Diagnostic Policy Service", EstRam = "~22 MB", Desc = "Enables problem detection, troubleshooting, and diagnostic reporting to Microsoft.", Recommended = true },
-                new { Name = "SysMain", Title = "SysMain (Superfetch)", EstRam = "~50 MB", Desc = "Caches frequently used applications into RAM (high disk/RAM load on older drives).", Recommended = false },
+                new { 
+                    Name = "DiagTrack", 
+                    Title = "Connected User Experiences & Telemetry", 
+                    EstRam = "~58 MB", 
+                    Desc = "Gathers system telemetry and user diagnostics.", 
+                    Recommended = true,
+                    Consequences = "Disables diagnostic and telemetry transmission to Microsoft. Essential Windows updates and operating system features are unaffected.",
+                    HelpUrl = "https://learn.microsoft.com/en-us/windows/privacy/configure-windows-diagnostic-data-in-your-organization"
+                },
+                new { 
+                    Name = "dmwappushservice", 
+                    Title = "WAP Push Telemetry Routing Service", 
+                    EstRam = "~20 MB", 
+                    Desc = "Routes telemetry collection messages in background.", 
+                    Recommended = true,
+                    Consequences = "Stops background routing of device management and telemetry push notifications. Standard internet and network connectivity remain completely functional.",
+                    HelpUrl = "https://learn.microsoft.com/en-us/windows/privacy/diagnostic-data-viewer-overview"
+                },
+                new { 
+                    Name = "InventorySvc", 
+                    Title = "Windows Compatibility & Inventory Appraisal", 
+                    EstRam = "~28 MB", 
+                    Desc = "Scans installed applications and hardware compatibility, transmitting telemetry to Microsoft.", 
+                    Recommended = true,
+                    Consequences = "Prevents Windows from scanning all installed applications and driver inventory for upload to Microsoft diagnostic servers.",
+                    HelpUrl = "https://learn.microsoft.com/en-us/windows/deployment/upgrade/how-windows-compatibility-appraiser-works"
+                },
+                new { 
+                    Name = "DPS", 
+                    Title = "Diagnostic Policy Service", 
+                    EstRam = "~22 MB", 
+                    Desc = "Enables problem detection, troubleshooting, and diagnostic reporting to Microsoft.", 
+                    Recommended = true,
+                    Consequences = "Disables automated built-in diagnostic troubleshooting wizards and background problem reporting to Microsoft.",
+                    HelpUrl = "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/diagnostic-policy-service"
+                },
+                new { 
+                    Name = "SysMain", 
+                    Title = "SysMain (Superfetch)", 
+                    EstRam = "~50 MB", 
+                    Desc = "Caches frequently used applications into RAM (high disk/RAM load on older drives).", 
+                    Recommended = false,
+                    Consequences = "Disables prefetching applications into memory cache. On systems with fast NVMe/SSD storage, disabling SysMain reduces unnecessary memory caching and disk writes with zero noticeable slowdown.",
+                    HelpUrl = "https://learn.microsoft.com/en-us/windows-server/administration/performance-tuning/subsystem/cache-and-memory-management/"
+                },
                 
                 // Cloud & Network Background Syncing
-                new { Name = "DoSvc", Title = "Delivery Optimization Service", EstRam = "~35 MB", Desc = "Peer-to-peer background bandwidth service that uploads and shares Windows updates across the internet.", Recommended = true },
-                new { Name = "WSAIFabricSvc", Title = "Windows AI Components Host Service", EstRam = "~30 MB", Desc = "Background worker process for Windows Copilot and local AI integration components.", Recommended = true },
-                new { Name = "CDPSvc", Title = "Connected Devices Platform Service", EstRam = "~20 MB", Desc = "Coordinates discovery and connectivity with companion mobile devices (Phone Link).", Recommended = false },
-                new { Name = "lfsvc", Title = "Geolocation Service", EstRam = "~15 MB", Desc = "Monitors system physical location and feeds location coordinates to apps.", Recommended = false },
+                new { 
+                    Name = "DoSvc", 
+                    Title = "Delivery Optimization Service", 
+                    EstRam = "~35 MB", 
+                    Desc = "Peer-to-peer background bandwidth service that uploads and shares Windows updates across the internet.", 
+                    Recommended = true,
+                    Consequences = "Disables peer-to-peer sharing of Windows Update files over local network and the internet. Windows Updates will download directly from Microsoft servers.",
+                    HelpUrl = "https://learn.microsoft.com/en-us/windows/deployment/do/waas-delivery-optimization"
+                },
+                new { 
+                    Name = "WSAIFabricSvc", 
+                    Title = "Windows AI Components Host Service", 
+                    EstRam = "~30 MB", 
+                    Desc = "Background worker process for Windows Copilot and local AI integration components.", 
+                    Recommended = true,
+                    Consequences = "Stops background host service for Windows Copilot and local AI modules.",
+                    HelpUrl = "https://learn.microsoft.com/en-us/windows/ai/"
+                },
+                new { 
+                    Name = "CDPSvc", 
+                    Title = "Connected Devices Platform Service", 
+                    EstRam = "~20 MB", 
+                    Desc = "Coordinates discovery and connectivity with companion mobile devices (Phone Link).", 
+                    Recommended = false,
+                    Consequences = "Disables device discovery and background syncing for Microsoft Phone Link with iOS and Android devices.",
+                    HelpUrl = "https://support.microsoft.com/en-us/topic/phone-link-requirements-and-setup-cd2a59f4-18f4-42f2-8958-5d512a83214b"
+                },
+                new { 
+                    Name = "lfsvc", 
+                    Title = "Geolocation Service", 
+                    EstRam = "~15 MB", 
+                    Desc = "Monitors system physical location and feeds location coordinates to apps.", 
+                    Recommended = false,
+                    Consequences = "Prevents Windows applications from accessing your device's physical GPS/network location directly via Windows Location APIs.",
+                    HelpUrl = "https://support.microsoft.com/en-us/windows/windows-location-service-and-privacy-3a8eed9b-a442-9344-9670-09b344422d06"
+                },
 
                 // Consumer & Background services
-                new { Name = "MapsBroker", Title = "Downloaded Maps Manager", EstRam = "~25 MB", Desc = "Background map manager for Windows Maps.", Recommended = true },
-                new { Name = "RetailDemo", Title = "Retail Demo Service", EstRam = "~15 MB", Desc = "Controls device behavior in store demonstration mode.", Recommended = true },
-                new { Name = "WMPNetworkSvc", Title = "Windows Media Player Network Sharing", EstRam = "~25 MB", Desc = "Shares media libraries over local network.", Recommended = true },
+                new { 
+                    Name = "MapsBroker", 
+                    Title = "Downloaded Maps Manager", 
+                    EstRam = "~25 MB", 
+                    Desc = "Background map manager for Windows Maps.", 
+                    Recommended = true,
+                    Consequences = "Disables background offline map tile downloads and sync for the Windows Maps app.",
+                    HelpUrl = "https://support.microsoft.com/en-us/windows/download-maps-for-offline-viewing-in-windows-fbe0d869-aa2b-8667-bb96-6e541a05ae6a"
+                },
+                new { 
+                    Name = "RetailDemo", 
+                    Title = "Retail Demo Service", 
+                    EstRam = "~15 MB", 
+                    Desc = "Controls device behavior in store demonstration mode.", 
+                    Recommended = true,
+                    Consequences = "Disables retail kiosk store demonstration mode. Has no impact on personal, professional, or gaming use.",
+                    HelpUrl = "https://learn.microsoft.com/en-us/windows/configuration/retail-demo-experience"
+                },
+                new { 
+                    Name = "WMPNetworkSvc", 
+                    Title = "Windows Media Player Network Sharing", 
+                    EstRam = "~25 MB", 
+                    Desc = "Shares media libraries over local network.", 
+                    Recommended = true,
+                    Consequences = "Disables local DLNA/UPnP network media sharing from Windows Media Player to other smart devices on your local network.",
+                    HelpUrl = "https://support.microsoft.com/en-us/windows/media-streaming-in-windows-media-player-8d96b92a-bf3b-9677-45ba-274e760c4004"
+                },
                 
                 // Xbox Live Services
-                new { Name = "XblAuthManager", Title = "Xbox Live Auth Manager", EstRam = "~20 MB", Desc = "Authentication services for Xbox Live applications.", Recommended = false },
-                new { Name = "XblGameSave", Title = "Xbox Live Game Save Service", EstRam = "~20 MB", Desc = "Syncs game saves to Xbox cloud.", Recommended = false },
-                new { Name = "XboxNetApiSvc", Title = "Xbox Live Networking Service", EstRam = "~20 MB", Desc = "Peer-to-peer networking service for Xbox Live.", Recommended = false },
+                new { 
+                    Name = "XblAuthManager", 
+                    Title = "Xbox Live Auth Manager", 
+                    EstRam = "~20 MB", 
+                    Desc = "Authentication services for Xbox Live applications.", 
+                    Recommended = false,
+                    Consequences = "Disables sign-in and authentication for Xbox Live services. If you play games via Xbox Game Pass or the Xbox App, keep this enabled.",
+                    HelpUrl = "https://support.xbox.com/en-US/help/games-apps/troubleshooting/troubleshoot-xbox-app-for-windows"
+                },
+                new { 
+                    Name = "XblGameSave", 
+                    Title = "Xbox Live Game Save Service", 
+                    EstRam = "~20 MB", 
+                    Desc = "Syncs game saves to Xbox cloud.", 
+                    Recommended = false,
+                    Consequences = "Prevents automatic cloud syncing of Xbox Game Pass game save files. Local saves and non-Xbox platforms (Steam, Epic) are unaffected.",
+                    HelpUrl = "https://support.xbox.com/en-US/help/games-apps/cloud-gaming/cloud-game-saves-faq"
+                },
+                new { 
+                    Name = "XboxNetApiSvc", 
+                    Title = "Xbox Live Networking Service", 
+                    EstRam = "~20 MB", 
+                    Desc = "Peer-to-peer networking service for Xbox Live.", 
+                    Recommended = false,
+                    Consequences = "Disables peer-to-peer networking and party voice chat within the Xbox Windows app.",
+                    HelpUrl = "https://support.xbox.com/en-US/help/hardware-network/connect-network/troubleshoot-party-chat"
+                },
                 
                 // System Connectivity & Printing
-                new { Name = "Spooler", Title = "Print Spooler Service", EstRam = "~37 MB", Desc = "Manages printer queues. Safe to disable if you do not use a printer.", Recommended = false },
-                new { Name = "TermService", Title = "Remote Desktop Service", EstRam = "~105 MB", Desc = "Allows inbound Remote Desktop connections to this computer.", Recommended = false }
+                new { 
+                    Name = "Spooler", 
+                    Title = "Print Spooler Service", 
+                    EstRam = "~37 MB", 
+                    Desc = "Manages printer queues. Safe to disable if you do not use a printer.", 
+                    Recommended = false,
+                    Consequences = "Disables printing queues. You will not be able to print to physical printers or export via Print to PDF until this service is re-enabled.",
+                    HelpUrl = "https://learn.microsoft.com/en-us/windows/win32/printdocs/print-spooler-architecture"
+                },
+                new { 
+                    Name = "TermService", 
+                    Title = "Remote Desktop Service", 
+                    EstRam = "~105 MB", 
+                    Desc = "Allows inbound Remote Desktop connections to this computer.", 
+                    Recommended = false,
+                    Consequences = "Blocks incoming Remote Desktop (RDP) connections from other PCs. Outbound remote desktop sessions to other machines remain fully functional.",
+                    HelpUrl = "https://learn.microsoft.com/en-us/windows-server/remote/remote-desktop-services/remote-desktop-services-overview"
+                }
             };
 
             foreach (var svc in serviceConfigs)
@@ -721,6 +1082,8 @@ namespace WinDebloat.Services
                         Description = $"{svc.Desc} (Currently running in RAM; applying stops and disables service).",
                         Details = $"Service: {svc.Name} | Status: Running | StartType: {sc.StartType}",
                         EstimatedMemory = svc.EstRam,
+                        Consequences = svc.Consequences,
+                        HelpUrl = svc.HelpUrl,
                         IsBloatware = true,
                         IsRecommended = svc.Recommended,
                         IsSelected = svc.Recommended,
@@ -813,6 +1176,8 @@ namespace WinDebloat.Services
                     Description = $"Version: {(string.IsNullOrEmpty(app.Version) ? "Unknown" : app.Version)} | Publisher: {(string.IsNullOrEmpty(app.Publisher) ? "Unknown" : app.Publisher)}",
                     Details = $"Install Location: {app.InstallLocation}\nUninstall Command: {uninstCmd}",
                     EstimatedMemory = "~50 - 250 MB",
+                    Consequences = "Runs the official desktop uninstaller for this program. Application files, configuration, and registry entries may be removed.",
+                    HelpUrl = "https://support.microsoft.com/en-us/windows/uninstall-or-remove-apps-and-programs-in-windows-4b55f974-2cc6-2d2b-d092-59590861cd08",
                     IsRecommended = false,
                     IsSelected = false,
                     RequiresAdmin = isHklm,

@@ -1,7 +1,9 @@
 using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using WinDebloat.Models;
 
 namespace WinDebloat
 {
@@ -26,6 +28,7 @@ namespace WinDebloat
     public partial class ModernDialog : Window
     {
         public ModernDialogResult Result { get; private set; } = ModernDialogResult.Cancel;
+        private string? _helpUrl;
 
         public ModernDialog()
         {
@@ -34,6 +37,21 @@ namespace WinDebloat
             {
                 if (e.ButtonState == MouseButtonState.Pressed) DragMove();
             };
+        }
+
+        private void DocBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(_helpUrl))
+            {
+                try
+                {
+                    Process.Start(new ProcessStartInfo(_helpUrl) { UseShellExecute = true });
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Unable to open browser: {ex.Message}");
+                }
+            }
         }
 
         private void PrimaryBtn_Click(object sender, RoutedEventArgs e)
@@ -189,6 +207,77 @@ namespace WinDebloat
             {
                 MessageText.Text = message;
             }, System.Windows.Threading.DispatcherPriority.Render);
+        }
+
+        public static void ShowItemDetails(DebloatItem item, Window? owner = null)
+        {
+            var dialog = new ModernDialog();
+            dialog._helpUrl = item.HelpUrl;
+            dialog.TitleText.Text = item.Title;
+            dialog.IconText.Text = "ℹ️";
+            dialog.IconBadge.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#1E3A8A"));
+            dialog.PrimaryBtn.Content = "Close";
+            dialog.PrimaryBtn.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#3B82F6"));
+            dialog.SecondaryBtn.Visibility = Visibility.Collapsed;
+            dialog.CancelBtn.Visibility = Visibility.Collapsed;
+
+            if (item.HasHelpUrl)
+            {
+                dialog.DocBtn.Visibility = Visibility.Visible;
+            }
+
+            var sb = new System.Text.StringBuilder();
+            sb.AppendLine(item.Description);
+            sb.AppendLine();
+
+            if (!string.IsNullOrWhiteSpace(item.Details))
+            {
+                sb.AppendLine($"• Technical Details: {item.Details}");
+            }
+            if (!string.IsNullOrWhiteSpace(item.EstimatedMemory))
+            {
+                sb.AppendLine($"• Estimated RAM Savings: {item.EstimatedMemory}");
+            }
+            if (item.RequiresAdmin)
+            {
+                sb.AppendLine("• Privilege Level: Requires Administrator Privileges");
+            }
+            if (item.RequiresReboot)
+            {
+                sb.AppendLine("• System Effect: Requires Sign-Out or PC Restart to take full visual effect");
+            }
+            if (item.HasStartupStatus)
+            {
+                sb.AppendLine($"• Startup Status: {item.StartupStatus}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(item.Consequences))
+            {
+                sb.AppendLine();
+                sb.AppendLine("⚠️ TRADE-OFFS & CONSEQUENCES:");
+                sb.AppendLine(item.Consequences);
+            }
+            else
+            {
+                sb.AppendLine();
+                sb.AppendLine("ℹ️ TRADE-OFFS & CONSEQUENCES:");
+                sb.AppendLine("Disabling or removing this item is safe and reversible through the Undo / Revert center.");
+            }
+
+            dialog.MessageText.Text = sb.ToString();
+
+            owner ??= Application.Current?.MainWindow;
+            if (owner != null && owner.IsVisible)
+            {
+                dialog.Owner = owner;
+                dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            }
+            else
+            {
+                dialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            }
+
+            dialog.ShowDialog();
         }
     }
 }

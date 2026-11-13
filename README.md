@@ -49,15 +49,26 @@ You can unblock the executable with either method:
 
 ## Key Features
 
-### Real-Time Memory Monitor
+### Real-Time Memory Monitor & Working Set Trimmer
 - Live physical RAM consumption, free memory, and utilization percentage gauge.
+- One-Click Inactive RAM Trimmer: Dedicated button to flush idle and dormant working set memory pages across active processes via the Windows PSAPI subsystem, freeing hundreds of megabytes of physical RAM on demand.
 - Instant feedback on memory reclaimed after applying debloat actions.
 
+### Feature Details, Consequences & Documentation Links
+- Educational Modal: Click the Details button on any item card to review an in-depth breakdown of what the feature does, its estimated memory impact, privilege requirements, and system effects.
+- Trade-offs & Consequences Disclosure: Explicitly states what functionality is affected (e.g. touch keyboard, emoji picker, phone link sync) before applying a change.
+- Official Web Documentation: Built-in Learn More Online button opens official Microsoft or vendor documentation for the specific component.
+
+### Startup Approved Registry Awareness
+- Automatically inspects Windows StartupApproved registry flags (`HKCU\...\Explorer\StartupApproved\Run`).
+- Distinguishes between active startup programs and items already toggled off in Windows Task Manager or Windows Settings.
+- Displays a dedicated status badge and leaves pre-disabled entries unselected by default.
+
 ### Bloatware Catalog (OEM & Consumer Bloat)
-- **OEM Preloads**: Automatically detects companion and telemetry software from **HP, Dell, Lenovo, and ASUS** (e.g. *HP Smart, HP Print Companion, Dell Command Update, Dell SupportAssist, Lenovo Vantage, MyASUS*).
-- **Consumer & Ad Preloads**: Identifies preinstalled sponsored app stubs (*TikTok, Instagram, Disney+, Spotify, Clipchamp, casual card games*).
-- **Telemetry & Assistant Apps**: Disables or removes *Connected User Experiences (`DiagTrack`), WAP Push Routing (`dmwappushservice`), Feedback Hub, Tips, Cortana, and Copilot*.
-- **Entertainment Hubs**: Identifies unused MSN feeds, maps managers, and legacy media players.
+- OEM Preloads: Automatically detects companion and telemetry software from HP, Dell, Lenovo, and ASUS (e.g. HP Smart, HP Print Companion, Dell Command Update, Dell SupportAssist, Lenovo Vantage, MyASUS).
+- Consumer & Ad Preloads: Identifies preinstalled sponsored app stubs (TikTok, Instagram, Disney+, Spotify, Clipchamp, casual card games).
+- Telemetry & Assistant Apps: Disables or removes Connected User Experiences (`DiagTrack`), WAP Push Routing (`dmwappushservice`), Feedback Hub, Tips, Cortana, and Copilot.
+- Entertainment Hubs: Identifies unused MSN feeds, maps managers, and legacy media players.
 
 ### Dynamic Scan Component for User-Added Bloat
 - Scans both 64-bit and 32-bit machine (`HKLM`) and user (`HKCU`) application databases for installed third-party desktop software.
@@ -65,10 +76,13 @@ You can unblock the executable with either method:
 - Inspects publisher, version, install location, and provides direct uninstaller execution.
 
 ### Reversible Core System Tweaks
-- **Start Menu Web Search**: Prevents `SearchHost.exe` from loading the Edge WebView2 browser engine and sending queries to Bing, speeding up local file/app search.
-- **Windows Widgets & News Feed**: Hides taskbar widget buttons and terminates background feed caching (`MicrosoftStartFeedProvider`).
-- **Browser Background Mode**: Enforces policies stopping Google Chrome and Microsoft Edge from pre-launching stealth background processes or lingering in memory after closure.
-- **Windows Input Experience**: Disables `TextInputHost.exe` from lingering in the background, freeing ~185 MB of RAM (touch keyboard and emoji picker).
+- Start Menu Web Search: Prevents `SearchHost.exe` from loading the Edge WebView2 browser engine and sending queries to Bing, speeding up local file/app search. Immediately flushes SearchHost to drop WebView2 memory with zero reboot required.
+- Windows Widgets & News Feed: Hides taskbar widget buttons and terminates background feed caching (`MicrosoftStartFeedProvider`).
+- Browser Background Mode: Enforces policies stopping Google Chrome and Microsoft Edge from pre-launching stealth background processes or lingering in memory after closure.
+- Ghost / Orphaned Browser Cleaner: Detects and terminates lingering headless browser processes running in the background without open windows.
+- Windows Input Experience: Disables `TextInputHost.exe` from lingering in the background, freeing ~185 MB of RAM (touch keyboard and emoji picker).
+- Telemetry Scheduled Tasks: Disables heavy diagnostic tasks including Microsoft Compatibility Appraiser, ProgramDataUpdater, and CEIP Consolidator.
+- Cross-Device Experience: Disables Phone Link background synchronization and handoff host (`CrossDeviceResume.exe`).
 
 ### Windows Services Optimization
 - **Active Running Services Only**: Strictly filters candidate services to those currently running in RAM, eliminating clutter from idle or stopped services.

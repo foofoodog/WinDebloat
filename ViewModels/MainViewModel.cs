@@ -148,6 +148,8 @@ namespace WinDebloat.ViewModels
         public ICommand SelectAllRevertCommand { get; }
         public ICommand DeselectAllRevertCommand { get; }
         public ICommand ClearHistoryCommand { get; }
+        public ICommand TrimRamCommand { get; }
+        public ICommand ShowDetailsCommand { get; }
 
         public MainViewModel()
         {
@@ -169,6 +171,8 @@ namespace WinDebloat.ViewModels
                 foreach (var item in RevertItems) item.IsSelected = false;
             });
             ClearHistoryCommand = new RelayCommand(async () => await ClearHistoryAsync());
+            TrimRamCommand = new RelayCommand(TrimWorkingSet);
+            ShowDetailsCommand = new RelayCommand<DebloatItem>(ShowItemDetails);
 
             IsAdmin = SystemHelper.IsAdministrator();
             UpdateMemoryStats();
@@ -453,6 +457,33 @@ namespace WinDebloat.ViewModels
                         }
                         ok = true;
                     }
+                    else if (record.RevertType == "SystemTweak_TelemetryTasks" || record.Id == "tweak_disable_telemetry_tasks")
+                    {
+                        progress.Report("Re-enabling telemetry scheduled tasks...");
+                        string[] tasks = new[]
+                        {
+                            @"\Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser Exp",
+                            @"\Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser",
+                            @"\Microsoft\Windows\Application Experience\ProgramDataUpdater",
+                            @"\Microsoft\Windows\Customer Experience Improvement Program\Consolidator",
+                            @"\Microsoft\Windows\Customer Experience Improvement Program\UsbCeip"
+                        };
+                        foreach (var t in tasks)
+                        {
+                            await SystemHelper.RunProcessAsync("schtasks.exe", $@"/change /tn ""{t}"" /enable", elevated: true);
+                        }
+                        ok = true;
+                    }
+                    else if (record.RevertType == "SystemTweak_CrossDevice" || record.Id == "tweak_disable_cross_device")
+                    {
+                        progress.Report("Re-enabling Cross-Device Experience...");
+                        SystemHelper.DeleteRegistryValue(RegistryHive.CurrentUser, @"Software\Policies\Microsoft\Windows\CrossDevice", "DisableCrossDeviceExperience");
+                        if (SystemHelper.IsAdministrator())
+                        {
+                            SystemHelper.DeleteRegistryValue(RegistryHive.LocalMachine, @"Software\Policies\Microsoft\Windows\CrossDevice", "DisableCrossDeviceExperience");
+                        }
+                        ok = true;
+                    }
 
                     if (ok)
                     {
@@ -520,6 +551,23 @@ namespace WinDebloat.ViewModels
             }
             UpdateSelectedCount();
             AddLog("Deselected all candidate items.");
+        }
+
+        private void TrimWorkingSet()
+        {
+            var (procs, reclaimedMb) = SystemHelper.TrimWorkingSetMemory();
+            UpdateMemoryStats();
+            AddLog($"RAM Trim: Cleaned memory pages across {procs} processes, reclaiming {reclaimedMb} MB.");
+            ModernDialog.ShowInfo(
+                $"Memory Trimmer completed!\n\nFlushed dormant memory pages across {procs} active processes.\nReclaimed: ~{reclaimedMb} MB of physical RAM.",
+                "RAM Trim Complete"
+            );
+        }
+
+        private void ShowItemDetails(DebloatItem? item)
+        {
+            if (item == null) return;
+            ModernDialog.ShowItemDetails(item);
         }
 
         public async Task ApplySelectedAsync(bool promptForElevation = true)
