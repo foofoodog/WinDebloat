@@ -9,7 +9,7 @@
         Height="820" Width="1060"
         MinHeight="600" MinWidth="850"
         WindowStartupLocation="CenterScreen"
-        Background="#0F172A"
+        Background="#0A0E17"
         Foreground="#F8FAFC"
         FontFamily="Segoe UI">
 
@@ -41,13 +41,13 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Border" Property="Background" Value="#1E293B"/>
+                                <Setter TargetName="Border" Property="Background" Value="#111827"/>
                                 <Setter Property="Foreground" Value="#F8FAFC"/>
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter Property="Foreground" Value="#38BDF8"/>
-                                <Setter TargetName="Border" Property="BorderBrush" Value="#38BDF8"/>
-                                <Setter TargetName="Border" Property="Background" Value="#1E293B"/>
+                                <Setter Property="Foreground" Value="#3B82F6"/>
+                                <Setter TargetName="Border" Property="BorderBrush" Value="#3B82F6"/>
+                                <Setter TargetName="Border" Property="Background" Value="#111827"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -64,8 +64,8 @@
 
         <!-- Card DataTemplate for Items -->
         <DataTemplate x:Key="DebloatItemTemplate">
-            <Border Background="#1E293B" 
-                    BorderBrush="#334155" 
+            <Border Background="#111827" 
+                    BorderBrush="#1F2937" 
                     BorderThickness="1" 
                     CornerRadius="8" 
                     Margin="0,0,0,10" 
@@ -95,7 +95,9 @@
                                        Foreground="#F8FAFC" />
 
                             <!-- Recommended Tag -->
-                            <Border Background="#065F46" 
+                            <Border Background="#052E16" 
+                                    BorderBrush="#15803D"
+                                    BorderThickness="1"
                                     CornerRadius="4" 
                                     Padding="6,2" 
                                     Margin="10,0,0,0"
@@ -103,11 +105,13 @@
                                 <TextBlock Text="RECOMMENDED" 
                                            FontSize="10" 
                                            FontWeight="Bold" 
-                                           Foreground="#34D399"/>
+                                           Foreground="#4ADE80"/>
                             </Border>
 
                             <!-- Admin Tag -->
-                            <Border Background="#7C2D12" 
+                            <Border Background="#450A0A" 
+                                    BorderBrush="#991B1B"
+                                    BorderThickness="1"
                                     CornerRadius="4" 
                                     Padding="6,2" 
                                     Margin="8,0,0,0"
@@ -119,7 +123,9 @@
                             </Border>
 
                             <!-- Reboot Required Tag -->
-                            <Border Background="#4C1D95" 
+                            <Border Background="#2E1065" 
+                                    BorderBrush="#6B21A8"
+                                    BorderThickness="1"
                                     CornerRadius="4" 
                                     Padding="6,2" 
                                     Margin="8,0,0,0"
@@ -127,11 +133,13 @@
                                 <TextBlock Text="REBOOT NEEDED" 
                                            FontSize="10" 
                                            FontWeight="Bold" 
-                                           Foreground="#C4B5FD"/>
+                                           Foreground="#C084FC"/>
                             </Border>
 
                             <!-- Bloatware Tag -->
-                            <Border Background="#3B0764" 
+                            <Border Background="#172554" 
+                                    BorderBrush="#1D4ED8"
+                                    BorderThickness="1"
                                     CornerRadius="4" 
                                     Padding="6,2" 
                                     Margin="8,0,0,0"
@@ -139,7 +147,7 @@
                                 <TextBlock Text="BLOATWARE" 
                                            FontSize="10" 
                                            FontWeight="Bold" 
-                                           Foreground="#D8B4FE"/>
+                                           Foreground="#93C5FD"/>
                             </Border>
                         </StackPanel>
 
@@ -161,14 +169,16 @@
                                 VerticalAlignment="Center" 
                                 HorizontalAlignment="Right" 
                                 Margin="12,0,0,0">
-                        <Border Background="#312E81" 
+                        <Border Background="#161F30" 
+                                BorderBrush="#253246"
+                                BorderThickness="1"
                                 CornerRadius="6" 
                                 Padding="8,4" 
                                 HorizontalAlignment="Right">
                             <TextBlock Text="{Binding EstimatedMemory}" 
-                                       Foreground="#818CF8" 
+                                       Foreground="#93C5FD" 
                                        FontWeight="SemiBold" 
-                                       FontSize="12"/>
+                                       FontSize="11"/>
                         </Border>
                         <TextBlock Text="{Binding StatusMessage}" 
                                    Foreground="#64748B" 
@@ -182,8 +192,8 @@
 
         <!-- Revert Item Template for Undo Tab -->
         <DataTemplate x:Key="RevertItemTemplate">
-            <Border Background="#1E293B" 
-                    BorderBrush="#334155" 
+            <Border Background="#111827" 
+                    BorderBrush="#1F2937" 
                     BorderThickness="1" 
                     CornerRadius="8" 
                     Margin="0,0,0,10" 
@@ -213,25 +223,29 @@
                                        Foreground="#F8FAFC" />
 
                             <!-- Status Badge -->
-                            <Border Background="#1E3A8A" 
+                            <Border Background="#172554" 
+                                    BorderBrush="#1D4ED8"
+                                    BorderThickness="1"
                                     CornerRadius="4" 
                                     Padding="6,2" 
                                     Margin="10,0,0,0">
                                 <TextBlock Text="APPLIED" 
                                            FontSize="10" 
                                            FontWeight="Bold" 
-                                           Foreground="#60A5FA"/>
+                                           Foreground="#93C5FD"/>
                             </Border>
 
                             <!-- Category Badge -->
-                            <Border Background="#312E81" 
+                            <Border Background="#1E293B" 
+                                    BorderBrush="#334155"
+                                    BorderThickness="1"
                                     CornerRadius="4" 
                                     Padding="6,2" 
                                     Margin="8,0,0,0">
                                 <TextBlock Text="{Binding Category}" 
                                            FontSize="10" 
                                            FontWeight="Bold" 
-                                           Foreground="#C7D2FE"/>
+                                           Foreground="#CBD5E1"/>
                             </Border>
                         </StackPanel>
 
@@ -256,9 +270,9 @@
                         <Button Command="{Binding DataContext.UndoItemCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                 CommandParameter="{Binding}"
                                 Content="↩️ Revert Change" 
-                                Background="#312E81" 
-                                Foreground="#E0E7FF" 
-                                BorderBrush="#6366F1" 
+                                Background="#1E293B" 
+                                Foreground="#93C5FD" 
+                                BorderBrush="#3B82F6" 
                                 BorderThickness="1" 
                                 FontWeight="Bold" 
                                 FontSize="12" 
@@ -269,7 +283,7 @@
                             </Button.Resources>
                         </Button>
                         <TextBlock Text="{Binding StatusMessage}" 
-                                   Foreground="#818CF8" 
+                                   Foreground="#64748B" 
                                    FontSize="11" 
                                    HorizontalAlignment="Right" 
                                    Margin="0,4,0,0"/>
@@ -283,7 +297,7 @@
         <Grid.RowDefinitions>
             <!-- Header -->
             <RowDefinition Height="Auto" />
-            <!-- Stern Bold Warning Banner -->
+            <!-- Stern Warning Banner -->
             <RowDefinition Height="Auto" />
             <!-- RAM Monitor Card -->
             <RowDefinition Height="Auto" />
@@ -313,9 +327,9 @@
             </StackPanel>
 
             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                <!-- Admin Badge -->
-                <Border Background="#1E293B" 
-                        BorderBrush="#334155" 
+                <!-- Admin Status Badge -->
+                <Border Background="#111827" 
+                        BorderBrush="#1F2937" 
                         BorderThickness="1" 
                         CornerRadius="6" 
                         Padding="10,6" 
@@ -325,19 +339,20 @@
                         <TextBlock Text="{Binding AdminBadgeText}" 
                                    FontWeight="SemiBold" 
                                    FontSize="12" 
-                                   Foreground="#38BDF8"/>
+                                   Foreground="#60A5FA"/>
                     </StackPanel>
                 </Border>
 
                 <!-- Relaunch as Admin Button -->
                 <Button Command="{Binding RelaunchAdminCommand}" 
                         Content="🛡️ Relaunch as Admin" 
-                        Background="#DC2626" 
-                        Foreground="White" 
+                        Background="#1E293B" 
+                        Foreground="#FCA5A5" 
+                        BorderBrush="#EF4444"
+                        BorderThickness="1"
                         FontWeight="SemiBold" 
                         Padding="12,6" 
                         Margin="0,0,10,0" 
-                        BorderThickness="0" 
                         Cursor="Hand"
                         Visibility="{Binding IsNotAdmin, Converter={StaticResource BoolToVis}}">
                     <Button.Resources>
@@ -350,11 +365,12 @@
                 <!-- Refresh Button -->
                 <Button Command="{Binding RefreshCommand}" 
                         Content="🔄 Refresh Scan" 
-                        Background="#334155" 
-                        Foreground="White" 
+                        Background="#1E293B" 
+                        Foreground="#F1F5F9" 
+                        BorderBrush="#334155"
+                        BorderThickness="1"
                         FontWeight="SemiBold" 
                         Padding="14,6" 
-                        BorderThickness="0" 
                         Cursor="Hand">
                     <Button.Resources>
                         <Style TargetType="Border">
@@ -365,11 +381,11 @@
             </StackPanel>
         </Grid>
 
-        <!-- Stern Bold Warning Banner -->
+        <!-- Stern System Integrity Warning Banner -->
         <Border Grid.Row="1" 
-                Background="#450A0A" 
-                BorderBrush="#DC2626" 
-                BorderThickness="2" 
+                Background="#131926" 
+                BorderBrush="#991B1B" 
+                BorderThickness="3,1,1,1" 
                 CornerRadius="8" 
                 Padding="14,10" 
                 Margin="0,0,0,14">
@@ -379,27 +395,27 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="🚨" FontSize="24" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                <TextBlock Text="🚨" FontSize="22" VerticalAlignment="Center" Margin="0,0,12,0"/>
                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
                     <TextBlock Text="USE AT YOUR OWN RISK — SYSTEM INTEGRITY WARNING" 
-                               FontWeight="Black" 
-                               FontSize="13.5" 
+                               FontWeight="Bold" 
+                               FontSize="13" 
                                Foreground="#F87171"/>
                     <TextBlock Text="Modifying core Windows components, disabling system services, or removing packages can cause system instability, break functionality, or brick your machine. Create a System Restore Point before making changes." 
-                               FontWeight="Bold" 
+                               FontWeight="Normal" 
                                FontSize="12" 
-                               Foreground="#FECACA" 
+                               Foreground="#CBD5E1" 
                                TextWrapping="Wrap" 
                                Margin="0,2,0,0"/>
                 </StackPanel>
                 <Button Grid.Column="2" 
                         Command="{Binding CreateRestorePointCommand}" 
                         Content="🛡️ Create Restore Point" 
-                        Background="#7F1D1D" 
-                        Foreground="#FEE2E2" 
+                        Background="#1E293B" 
+                        Foreground="#FCA5A5" 
                         BorderBrush="#EF4444" 
                         BorderThickness="1" 
-                        FontWeight="Bold" 
+                        FontWeight="SemiBold" 
                         FontSize="12" 
                         Padding="12,7" 
                         Cursor="Hand" 
@@ -414,8 +430,8 @@
 
         <!-- RAM Monitor Card -->
         <Border Grid.Row="2" 
-                Background="#1E293B" 
-                BorderBrush="#334155" 
+                Background="#111827" 
+                BorderBrush="#1F2937" 
                 BorderThickness="1" 
                 CornerRadius="8" 
                 Padding="16,12" 
@@ -441,15 +457,15 @@
                     </StackPanel>
 
                     <StackPanel Grid.Column="2" Orientation="Horizontal">
-                        <TextBlock Text="Used: " Foreground="#94A3B8" FontSize="13"/>
-                        <TextBlock Text="{Binding MemoryUsedGB, StringFormat='{}{0:F2} GB'}" FontWeight="Bold" Foreground="#38BDF8" FontSize="13"/>
-                        <TextBlock Text="  |  Free: " Foreground="#94A3B8" FontSize="13"/>
-                        <TextBlock Text="{Binding MemoryAvailableGB, StringFormat='{}{0:F2} GB'}" FontWeight="Bold" Foreground="#34D399" FontSize="13"/>
-                        <TextBlock Text="  |  Total: " Foreground="#94A3B8" FontSize="13"/>
-                        <TextBlock Text="{Binding MemoryTotalGB, StringFormat='{}{0:F2} GB'}" Foreground="#E2E8F0" FontSize="13"/>
-                        <TextBlock Text=" (" Foreground="#94A3B8" FontSize="13"/>
-                        <TextBlock Text="{Binding MemoryPercent, StringFormat='{}{0}%'}" FontWeight="Bold" Foreground="#F59E0B" FontSize="13"/>
-                        <TextBlock Text=" used)" Foreground="#94A3B8" FontSize="13"/>
+                        <TextBlock Text="Used: " Foreground="#64748B" FontSize="13"/>
+                        <TextBlock Text="{Binding MemoryUsedGB, StringFormat='{}{0:F2} GB'}" FontWeight="Bold" Foreground="#F8FAFC" FontSize="13"/>
+                        <TextBlock Text="  |  Free: " Foreground="#64748B" FontSize="13"/>
+                        <TextBlock Text="{Binding MemoryAvailableGB, StringFormat='{}{0:F2} GB'}" FontWeight="Bold" Foreground="#F8FAFC" FontSize="13"/>
+                        <TextBlock Text="  |  Total: " Foreground="#64748B" FontSize="13"/>
+                        <TextBlock Text="{Binding MemoryTotalGB, StringFormat='{}{0:F2} GB'}" Foreground="#F8FAFC" FontSize="13"/>
+                        <TextBlock Text=" (" Foreground="#64748B" FontSize="13"/>
+                        <TextBlock Text="{Binding MemoryPercent, StringFormat='{}{0}%'}" FontWeight="Bold" Foreground="#38BDF8" FontSize="13"/>
+                        <TextBlock Text=" used)" Foreground="#64748B" FontSize="13"/>
                     </StackPanel>
                 </Grid>
 
@@ -459,8 +475,8 @@
                              Minimum="0" 
                              Maximum="100" 
                              Value="{Binding MemoryPercent}" 
-                             Foreground="#6366F1" 
-                             Background="#334155" 
+                             Foreground="#3B82F6" 
+                             Background="#1E293B" 
                              BorderThickness="0"/>
             </Grid>
         </Border>
@@ -515,8 +531,8 @@
 
                     <!-- Revert Toolbar -->
                     <Border Grid.Row="0" 
-                            Background="#1E293B" 
-                            BorderBrush="#334155" 
+                            Background="#111827" 
+                            BorderBrush="#1F2937" 
                             BorderThickness="1" 
                             CornerRadius="8" 
                             Padding="14,10" 
@@ -541,11 +557,12 @@
                             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                                 <Button Command="{Binding SelectAllRevertCommand}" 
                                         Content="Select All" 
-                                        Background="#334155" 
-                                        Foreground="White" 
+                                        Background="#1E293B" 
+                                        Foreground="#E2E8F0" 
+                                        BorderBrush="#334155"
+                                        BorderThickness="1"
                                         Padding="12,6" 
                                         Margin="0,0,8,0" 
-                                        BorderThickness="0" 
                                         Cursor="Hand">
                                     <Button.Resources>
                                         <Style TargetType="Border"><Setter Property="CornerRadius" Value="6"/></Style>
@@ -554,11 +571,12 @@
 
                                 <Button Command="{Binding DeselectAllRevertCommand}" 
                                         Content="Clear All" 
-                                        Background="#334155" 
-                                        Foreground="White" 
+                                        Background="#1E293B" 
+                                        Foreground="#E2E8F0" 
+                                        BorderBrush="#334155"
+                                        BorderThickness="1"
                                         Padding="12,6" 
                                         Margin="0,0,8,0" 
-                                        BorderThickness="0" 
                                         Cursor="Hand">
                                     <Button.Resources>
                                         <Style TargetType="Border"><Setter Property="CornerRadius" Value="6"/></Style>
@@ -567,7 +585,7 @@
 
                                 <Button Command="{Binding UndoSelectedCommand}" 
                                         Content="↩️ Revert Selected" 
-                                        Background="#4F46E5" 
+                                        Background="#2563EB" 
                                         Foreground="White" 
                                         FontWeight="Bold" 
                                         Padding="14,6" 
@@ -580,12 +598,13 @@
 
                                 <Button Command="{Binding ClearHistoryCommand}" 
                                         Content="🗑️ Clear History" 
-                                        Background="#334155" 
+                                        Background="#1E293B" 
                                         Foreground="#FCA5A5" 
+                                        BorderBrush="#EF4444"
+                                        BorderThickness="1"
                                         FontWeight="SemiBold" 
                                         Padding="12,6" 
                                         Margin="8,0,0,0" 
-                                        BorderThickness="0" 
                                         Cursor="Hand"
                                         ToolTip="Clear persistent JSON undo history from disk">
                                     <Button.Resources>
@@ -598,8 +617,8 @@
 
                     <!-- Empty State Notice -->
                     <Border Grid.Row="1" 
-                            Background="#1E293B" 
-                            BorderBrush="#334155" 
+                            Background="#111827" 
+                            BorderBrush="#1F2937" 
                             BorderThickness="1" 
                             CornerRadius="8" 
                             Padding="40,30" 
@@ -634,8 +653,8 @@
 
         <!-- Bottom Controls -->
         <Border Grid.Row="4" 
-                Background="#1E293B" 
-                BorderBrush="#334155" 
+                Background="#111827" 
+                BorderBrush="#1F2937" 
                 BorderThickness="1" 
                 CornerRadius="8" 
                 Padding="14,10" 
@@ -650,12 +669,13 @@
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <Button Command="{Binding SelectRecommendedCommand}" 
                             Content="⭐ Select Recommended" 
-                            Background="#065F46" 
-                            Foreground="#A7F3D0" 
+                            Background="#1E293B" 
+                            Foreground="#E2E8F0" 
+                            BorderBrush="#334155"
+                            BorderThickness="1"
                             FontWeight="SemiBold" 
                             Padding="12,7" 
                             Margin="0,0,8,0" 
-                            BorderThickness="0" 
                             Cursor="Hand">
                         <Button.Resources>
                             <Style TargetType="Border"><Setter Property="CornerRadius" Value="6"/></Style>
@@ -664,11 +684,12 @@
 
                     <Button Command="{Binding SelectAllCommand}" 
                             Content="Select All" 
-                            Background="#334155" 
-                            Foreground="White" 
+                            Background="#1E293B" 
+                            Foreground="#E2E8F0" 
+                            BorderBrush="#334155"
+                            BorderThickness="1"
                             Padding="12,7" 
                             Margin="0,0,8,0" 
-                            BorderThickness="0" 
                             Cursor="Hand">
                         <Button.Resources>
                             <Style TargetType="Border"><Setter Property="CornerRadius" Value="6"/></Style>
@@ -677,10 +698,11 @@
 
                     <Button Command="{Binding DeselectAllCommand}" 
                             Content="Clear All" 
-                            Background="#334155" 
-                            Foreground="White" 
+                            Background="#1E293B" 
+                            Foreground="#E2E8F0" 
+                            BorderBrush="#334155"
+                            BorderThickness="1"
                             Padding="12,7" 
-                            BorderThickness="0" 
                             Cursor="Hand">
                         <Button.Resources>
                             <Style TargetType="Border"><Setter Property="CornerRadius" Value="6"/></Style>
@@ -699,11 +721,11 @@
 
                 <Button Grid.Column="2" 
                         Command="{Binding ApplySelectedCommand}" 
-                        Background="#6366F1" 
+                        Background="#2563EB" 
                         Foreground="White" 
                         FontWeight="Bold" 
                         FontSize="14" 
-                        Padding="20,8" 
+                        Padding="22,8" 
                         BorderThickness="0" 
                         Cursor="Hand">
                     <Button.Resources>
@@ -720,8 +742,8 @@
 
         <!-- Execution Log Console -->
         <Border Grid.Row="5" 
-                Background="#0B0F19" 
-                BorderBrush="#1E293B" 
+                Background="#070A10" 
+                BorderBrush="#1F2937" 
                 BorderThickness="1" 
                 CornerRadius="6" 
                 Padding="10">
