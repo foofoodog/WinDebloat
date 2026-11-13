@@ -30,7 +30,7 @@
             <Setter Property="Margin" Value="0,0,12,0"/>
             <Setter Property="BorderThickness" Value="0,0,0,3"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TabItem">
@@ -156,7 +156,8 @@
                     BorderThickness="1" 
                     CornerRadius="8" 
                     Margin="0,0,0,10" 
-                    Padding="14,12">
+                    Padding="14,12"
+                    HorizontalAlignment="Stretch">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -284,7 +285,8 @@
                     BorderThickness="1" 
                     CornerRadius="8" 
                     Margin="0,0,0,10" 
-                    Padding="14,12">
+                    Padding="14,12"
+                    HorizontalAlignment="Stretch">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -575,36 +577,36 @@
                     Margin="0,0,0,12">
             <!-- System Tweaks Tab -->
             <TabItem Header="{Binding SystemTweaksTabHeader}" MinWidth="145">
-                <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,12,0,0">
-                    <ItemsControl ItemsSource="{Binding SystemTweakItems}" ItemTemplate="{StaticResource DebloatItemTemplate}"/>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,12,0,0">
+                    <ItemsControl ItemsSource="{Binding SystemTweakItems}" ItemTemplate="{StaticResource DebloatItemTemplate}" HorizontalAlignment="Stretch"/>
                 </ScrollViewer>
             </TabItem>
 
             <!-- Startup Apps Tab -->
             <TabItem Header="{Binding StartupTabHeader}" MinWidth="145">
-                <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,12,0,0">
-                    <ItemsControl ItemsSource="{Binding StartupItems}" ItemTemplate="{StaticResource DebloatItemTemplate}"/>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,12,0,0">
+                    <ItemsControl ItemsSource="{Binding StartupItems}" ItemTemplate="{StaticResource DebloatItemTemplate}" HorizontalAlignment="Stretch"/>
                 </ScrollViewer>
             </TabItem>
 
             <!-- Bloatware Tab -->
             <TabItem Header="{Binding BloatwareTabHeader}" MinWidth="135">
-                <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,12,0,0">
-                    <ItemsControl ItemsSource="{Binding BloatwareItems}" ItemTemplate="{StaticResource DebloatItemTemplate}"/>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,12,0,0">
+                    <ItemsControl ItemsSource="{Binding BloatwareItems}" ItemTemplate="{StaticResource DebloatItemTemplate}" HorizontalAlignment="Stretch"/>
                 </ScrollViewer>
             </TabItem>
 
             <!-- Windows Services Tab -->
             <TabItem Header="{Binding ServicesTabHeader}" MinWidth="170">
-                <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,12,0,0">
-                    <ItemsControl ItemsSource="{Binding ServiceItems}" ItemTemplate="{StaticResource DebloatItemTemplate}"/>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,12,0,0">
+                    <ItemsControl ItemsSource="{Binding ServiceItems}" ItemTemplate="{StaticResource DebloatItemTemplate}" HorizontalAlignment="Stretch"/>
                 </ScrollViewer>
             </TabItem>
 
             <!-- User Installed Apps Tab -->
             <TabItem Header="{Binding UserAppsTabHeader}" MinWidth="185">
-                <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,12,0,0">
-                    <ItemsControl ItemsSource="{Binding UserAppItems}" ItemTemplate="{StaticResource DebloatItemTemplate}"/>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,12,0,0">
+                    <ItemsControl ItemsSource="{Binding UserAppItems}" ItemTemplate="{StaticResource DebloatItemTemplate}" HorizontalAlignment="Stretch"/>
                 </ScrollViewer>
             </TabItem>
 
@@ -706,8 +708,9 @@
                     <!-- List of Revertable Items -->
                     <ScrollViewer Grid.Row="1" 
                                   VerticalScrollBarVisibility="Auto" 
+                                  HorizontalScrollBarVisibility="Disabled"
                                   Visibility="{Binding HasRevertItems, Converter={StaticResource BoolToVis}}">
-                        <ItemsControl ItemsSource="{Binding RevertItems}" ItemTemplate="{StaticResource RevertItemTemplate}"/>
+                        <ItemsControl ItemsSource="{Binding RevertItems}" ItemTemplate="{StaticResource RevertItemTemplate}" HorizontalAlignment="Stretch"/>
                     </ScrollViewer>
                 </Grid>
             </TabItem>
