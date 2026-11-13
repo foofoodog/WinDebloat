@@ -118,6 +118,12 @@ namespace WinDebloat.Services
                         }
                         catch { }
 
+                        // Consistent with Services: If already disabled in Task Manager / Settings, it uses 0 MB on boot; skip it
+                        if (startupStatus == "Disabled in Task Manager")
+                        {
+                            continue;
+                        }
+
                         list.Add(new DebloatItem
                         {
                             Id = $"startup_hkcu_{currentValName}",
@@ -129,8 +135,8 @@ namespace WinDebloat.Services
                             StartupStatus = startupStatus,
                             Consequences = "Prevents this application from starting automatically when Windows boots. You can still launch it manually from the Start menu or desktop at any time.",
                             HelpUrl = "https://support.microsoft.com/en-us/windows/change-which-apps-run-automatically-at-startup-in-windows-e030b74c-8bc1-4604-d459-ae3cb0d69492",
-                            IsRecommended = recommended && startupStatus != "Disabled in Task Manager",
-                            IsSelected = recommended && startupStatus != "Disabled in Task Manager",
+                            IsRecommended = recommended,
+                            IsSelected = recommended,
                             Tag = originalCmd,
                             UndoHistoryEntry = new UndoRecord
                             {

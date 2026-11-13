@@ -64,7 +64,7 @@ WinDebloat was built on five core architectural pillars to provide a safe, trans
 
 2. Live Runtime Intelligence (Zero Blind Tweaking)
 - Active running services filter: Only services currently loaded into physical RAM are presented, eliminating clutter from idle or stopped services.
-- StartupApproved awareness: Dynamically reads binary status flags in the registry so apps already disabled in Task Manager are detected, badged, and excluded from default selection.
+- StartupApproved awareness: Dynamically reads binary status flags in the registry so apps already disabled in Task Manager (consuming 0 MB) are automatically filtered out, ensuring only active boot resource hogs are presented.
 - Ghost browser detection: Actively checks the process tree for orphaned headless browser instances (Chrome and Edge) left lingering after windows are closed, while safely bypassing active browsing sessions.
 
 3. Informed Consent & Educational Transparency
@@ -99,7 +99,7 @@ WinDebloat was built on five core architectural pillars to provide a safe, trans
 ### Startup Approved Registry Awareness
 - Automatically inspects Windows StartupApproved registry flags (`HKCU\...\Explorer\StartupApproved\Run`).
 - Distinguishes between active startup programs and items already toggled off in Windows Task Manager or Windows Settings.
-- Displays a dedicated status badge and leaves pre-disabled entries unselected by default.
+- Eliminates 0 MB clutter: Apps that are already disabled do not consume boot RAM and are automatically filtered out, ensuring you only spend time optimizing actively running startup entries.
 
 ### Bloatware Catalog (OEM & Consumer Bloat)
 - OEM Preloads: Automatically detects companion and telemetry software from HP, Dell, Lenovo, and ASUS (e.g. HP Smart, HP Print Companion, Dell Command Update, Dell SupportAssist, Lenovo Vantage, MyASUS).
