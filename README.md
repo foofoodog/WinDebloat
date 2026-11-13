@@ -71,7 +71,7 @@ You can unblock the executable with either method:
 
 ### Windows Services Optimization
 - **Active Running Services Only**: Strictly filters candidate services to those currently running in RAM, eliminating clutter from idle or stopped services.
-- **Safe Disabling**: Configures telemetry, Superfetch (`SysMain`), and unused background services to `Disabled` in the Windows Service Control Manager and registry.
+- **Safe Disabling**: Configures telemetry (`DiagTrack`, `InventorySvc`, `DPS`), Superfetch (`SysMain`), Delivery Optimization (`DoSvc`), Windows AI Host (`WSAIFabricSvc`), Geolocation (`lfsvc`), and unused background services to `Disabled` in the Windows Service Control Manager and registry.
 - Stops the active instance immediately and moves the service to the Undo center.
 
 ### Persistent JSON Undo & Revert Engine

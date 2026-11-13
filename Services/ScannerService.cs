@@ -624,8 +624,16 @@ namespace WinDebloat.Services
                 // Telemetry & Diagnostic tracking
                 new { Name = "DiagTrack", Title = "Connected User Experiences & Telemetry", EstRam = "~58 MB", Desc = "Gathers system telemetry and user diagnostics.", Recommended = true },
                 new { Name = "dmwappushservice", Title = "WAP Push Telemetry Routing Service", EstRam = "~20 MB", Desc = "Routes telemetry collection messages in background.", Recommended = true },
+                new { Name = "InventorySvc", Title = "Windows Compatibility & Inventory Appraisal", EstRam = "~28 MB", Desc = "Scans installed applications and hardware compatibility, transmitting telemetry to Microsoft.", Recommended = true },
+                new { Name = "DPS", Title = "Diagnostic Policy Service", EstRam = "~22 MB", Desc = "Enables problem detection, troubleshooting, and diagnostic reporting to Microsoft.", Recommended = true },
                 new { Name = "SysMain", Title = "SysMain (Superfetch)", EstRam = "~50 MB", Desc = "Caches frequently used applications into RAM (high disk/RAM load on older drives).", Recommended = false },
                 
+                // Cloud & Network Background Syncing
+                new { Name = "DoSvc", Title = "Delivery Optimization Service", EstRam = "~35 MB", Desc = "Peer-to-peer background bandwidth service that uploads and shares Windows updates across the internet.", Recommended = true },
+                new { Name = "WSAIFabricSvc", Title = "Windows AI Components Host Service", EstRam = "~30 MB", Desc = "Background worker process for Windows Copilot and local AI integration components.", Recommended = true },
+                new { Name = "CDPSvc", Title = "Connected Devices Platform Service", EstRam = "~20 MB", Desc = "Coordinates discovery and connectivity with companion mobile devices (Phone Link).", Recommended = false },
+                new { Name = "lfsvc", Title = "Geolocation Service", EstRam = "~15 MB", Desc = "Monitors system physical location and feeds location coordinates to apps.", Recommended = false },
+
                 // Consumer & Background services
                 new { Name = "MapsBroker", Title = "Downloaded Maps Manager", EstRam = "~25 MB", Desc = "Background map manager for Windows Maps.", Recommended = true },
                 new { Name = "RetailDemo", Title = "Retail Demo Service", EstRam = "~15 MB", Desc = "Controls device behavior in store demonstration mode.", Recommended = true },
