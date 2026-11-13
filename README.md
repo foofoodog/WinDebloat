@@ -26,6 +26,25 @@
 - **[WinDebloat-Portable.zip](https://github.com/foofoodog/WinDebloat/releases)**:
   - Lightweight framework-dependent archive for systems with .NET 10 installed.
 
+### Quick Launch via PowerShell (Bypasses Browser Mark of the Web)
+Downloading directly in PowerShell avoids the browser's "Mark of the Web" attachment lock entirely:
+
+```powershell
+irm https://github.com/foofoodog/WinDebloat/releases/latest/download/WinDebloat.exe -OutFile WinDebloat.exe; .\WinDebloat.exe
+```
+
+### Unblocking Browser Downloads
+When downloading executable files via a web browser (Edge, Chrome, Firefox), Windows attaches a `Zone.Identifier` ("Mark of the Web") tag to protect against unknown files, requiring you to unblock it before running.
+
+You can unblock the executable with either method:
+
+- **PowerShell command**:
+  ```powershell
+  Unblock-File .\WinDebloat.exe
+  ```
+- **File Explorer**:
+  Right-click `WinDebloat.exe` -> select **Properties** -> check **Unblock** at the bottom -> click **OK**.
+
 ---
 
 ## Key Features
@@ -84,11 +103,12 @@
 ## Getting Started
 
 ### Running the Pre-Built Binary
-1. Download **`WinDebloat.exe`** from [Releases](https://github.com/foofoodog/WinDebloat/releases).
-2. Right-click and choose **Run as administrator** (or launch normally; the app prompts for elevation when applying admin-level actions).
-3. *(Recommended)* Click **Create Restore Point** in the top warning banner.
-4. Select the optimizations you want to apply, or click **Select Recommended**.
-5. Click **Apply Selected**.
+1. Download **`WinDebloat.exe`** from [Releases](https://github.com/foofoodog/WinDebloat/releases) (or use the PowerShell one-liner above).
+2. If downloaded through a browser, unblock the file if prompted (`Unblock-File .\WinDebloat.exe` or right-click Properties -> **Unblock**).
+3. Right-click and choose **Run as administrator** (or launch normally; the app prompts for elevation when applying admin-level actions).
+4. *(Recommended)* Click **Create Restore Point** in the top warning banner.
+5. Select the optimizations you want to apply, or click **Select Recommended**.
+6. Click **Apply Selected**.
 
 ---
 
