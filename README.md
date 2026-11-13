@@ -47,6 +47,39 @@ You can unblock the executable with either method:
 
 ---
 
+## WinDebloat's Raison d'Être: The 5 Pillars
+
+Most Windows debloaters on GitHub fall into two extremes: either intimidating, heavy-handed PowerShell scripts that blindly execute commands without rollback, or aggressive privacy suites focused on ideology rather than measurable performance.
+
+WinDebloat was built on five core architectural pillars to provide a safe, transparent, and observable alternative:
+
+1. Performance-Driven & Observable (Not Ideological)
+- Live physical memory gauge provides real-time before-and-after RAM consumption feedback.
+- Every optimization displays an estimated memory footprint so you know exactly where resources are reclaimed.
+- Built-in Working Set Trimmer flushes dormant memory pages across active processes via the Windows PSAPI subsystem on demand.
+
+2. Live Runtime Intelligence (Zero Blind Tweaking)
+- Active running services filter: Only services currently loaded into physical RAM are presented, eliminating clutter from idle or stopped services.
+- StartupApproved awareness: Dynamically reads binary status flags in the registry so apps already disabled in Task Manager are detected, badged, and excluded from default selection.
+- Ghost browser detection: Actively checks the process tree for orphaned headless browser instances (Chrome and Edge) left lingering after windows are closed, while safely bypassing active browsing sessions.
+
+3. Informed Consent & Educational Transparency
+- In-app Details modal: Every card offers an in-depth breakdown of technical registry keys, estimated savings, and privilege requirements.
+- Trade-offs and consequences disclosure: Explicitly informs you what features are affected (such as touch keyboard input, emoji panels, or phone synchronization) before you apply an action.
+- Official documentation links: Direct links connect you to official Microsoft or vendor documentation for full context.
+
+4. Bulletproof, Granular Reversibility (The Undo Center)
+- Persistent JSON transaction log: Every applied change, original registry string, and service startup configuration is saved to disk (`undo_history.json`).
+- Survives reboots and restarts: The dedicated Undo / Revert center reloads your historical modifications anytime you launch the application.
+- Granular restore: Revert individual tweaks or perform bulk restorations with a single click.
+- Automated System Restore snapshot: Built-in Volume Shadow Copy (VSS) snapshot creation with 24-hour rate limit bypass serves as a comprehensive safety net.
+
+5. True Zero-Footprint Portability
+- 100% standalone single-file executable: Requires zero installers, no runtime setup, and no dependencies.
+- No background daemon: WinDebloat never installs background telemetry or resident watcher services, leaving zero persistent overhead on your PC.
+
+---
+
 ## Key Features
 
 ### Real-Time Memory Monitor & Working Set Trimmer
