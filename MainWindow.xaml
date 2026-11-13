@@ -310,18 +310,6 @@
                 <TextBlock Text="Free memory and disable unnecessary background apps and services" 
                            FontSize="13" 
                            Foreground="#94A3B8" />
-                <Border Background="#451A03" 
-                        BorderBrush="#B45309" 
-                        BorderThickness="1" 
-                        CornerRadius="4" 
-                        Padding="8,4" 
-                        Margin="0,6,0,0"
-                        HorizontalAlignment="Left"
-                        Visibility="{Binding IsNotAdmin, Converter={StaticResource BoolToVis}}">
-                    <TextBlock Text="⚠️ Running as Standard User. Actions requiring Administrator privileges will prompt for elevation when applied." 
-                               Foreground="#FDE68A" 
-                               FontSize="11" />
-                </Border>
             </StackPanel>
 
             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
