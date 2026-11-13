@@ -1,0 +1,87 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Base Window -->
+    <SolidColorBrush x:Key="WindowBackgroundBrush" Color="#F1F5F9"/>
+    <SolidColorBrush x:Key="WindowForegroundBrush" Color="#0F172A"/>
+
+    <!-- Cards & Surfaces -->
+    <SolidColorBrush x:Key="CardBackgroundBrush" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="CardBorderBrush" Color="#E2E8F0"/>
+    <SolidColorBrush x:Key="CardHoverBorderBrush" Color="#CBD5E1"/>
+
+    <!-- Typography -->
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="#0F172A"/>
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#475569"/>
+    <SolidColorBrush x:Key="TextMutedBrush" Color="#64748B"/>
+
+    <!-- Controls & Buttons -->
+    <SolidColorBrush x:Key="ControlBackgroundBrush" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="ControlBorderBrush" Color="#CBD5E1"/>
+    <SolidColorBrush x:Key="ControlForegroundBrush" Color="#1E293B"/>
+    <SolidColorBrush x:Key="ControlHoverBackgroundBrush" Color="#F1F5F9"/>
+    <SolidColorBrush x:Key="ControlHoverBorderBrush" Color="#94A3B8"/>
+
+    <!-- Activity Log Console -->
+    <SolidColorBrush x:Key="LogBackgroundBrush" Color="#F8FAFC"/>
+    <SolidColorBrush x:Key="LogBorderBrush" Color="#E2E8F0"/>
+    <SolidColorBrush x:Key="LogForegroundBrush" Color="#334155"/>
+    <SolidColorBrush x:Key="LogHeaderBrush" Color="#64748B"/>
+
+    <!-- RAM Monitor -->
+    <SolidColorBrush x:Key="ProgressBarTrackBrush" Color="#E2E8F0"/>
+    <SolidColorBrush x:Key="ProgressBarFillBrush" Color="#2563EB"/>
+    <SolidColorBrush x:Key="RamBadgeBackgroundBrush" Color="#EFF6FF"/>
+    <SolidColorBrush x:Key="RamBadgeBorderBrush" Color="#BFDBFE"/>
+    <SolidColorBrush x:Key="RamBadgeForegroundBrush" Color="#1D4ED8"/>
+    <SolidColorBrush x:Key="RamStatPercentBrush" Color="#0284C7"/>
+
+    <!-- Quick Action / Trim Button -->
+    <SolidColorBrush x:Key="TrimButtonBackgroundBrush" Color="#F0F9FF"/>
+    <SolidColorBrush x:Key="TrimButtonBorderBrush" Color="#0284C7"/>
+    <SolidColorBrush x:Key="TrimButtonForegroundBrush" Color="#0369A1"/>
+
+    <!-- Status Tags -->
+    <SolidColorBrush x:Key="TagAdminBackgroundBrush" Color="#FEF2F2"/>
+    <SolidColorBrush x:Key="TagAdminBorderBrush" Color="#FECACA"/>
+    <SolidColorBrush x:Key="TagAdminForegroundBrush" Color="#DC2626"/>
+
+    <SolidColorBrush x:Key="TagRecommendedBackgroundBrush" Color="#F0FDF4"/>
+    <SolidColorBrush x:Key="TagRecommendedBorderBrush" Color="#BBF7D0"/>
+    <SolidColorBrush x:Key="TagRecommendedForegroundBrush" Color="#16A34A"/>
+
+    <SolidColorBrush x:Key="TagBloatwareBackgroundBrush" Color="#EFF6FF"/>
+    <SolidColorBrush x:Key="TagBloatwareBorderBrush" Color="#BFDBFE"/>
+    <SolidColorBrush x:Key="TagBloatwareForegroundBrush" Color="#1D4ED8"/>
+
+    <SolidColorBrush x:Key="TagRebootBackgroundBrush" Color="#FAF5FF"/>
+    <SolidColorBrush x:Key="TagRebootBorderBrush" Color="#E9D5FF"/>
+    <SolidColorBrush x:Key="TagRebootForegroundBrush" Color="#9333EA"/>
+
+    <SolidColorBrush x:Key="TagStartupBackgroundBrush" Color="#F1F5F9"/>
+    <SolidColorBrush x:Key="TagStartupBorderBrush" Color="#CBD5E1"/>
+    <SolidColorBrush x:Key="TagStartupForegroundBrush" Color="#475569"/>
+
+    <!-- Warning Banner -->
+    <SolidColorBrush x:Key="WarningBannerBackgroundBrush" Color="#FEF2F2"/>
+    <SolidColorBrush x:Key="WarningBannerBorderBrush" Color="#F87171"/>
+    <SolidColorBrush x:Key="WarningBannerTitleBrush" Color="#B91C1C"/>
+    <SolidColorBrush x:Key="WarningBannerTextBrush" Color="#7F1D1D"/>
+
+    <!-- Tab Headers -->
+    <SolidColorBrush x:Key="TabHeaderUnselectedBrush" Color="#64748B"/>
+    <SolidColorBrush x:Key="TabHeaderSelectedBrush" Color="#2563EB"/>
+    <SolidColorBrush x:Key="TabHeaderHoverBackgroundBrush" Color="#E2E8F0"/>
+    <SolidColorBrush x:Key="TabHeaderHoverForegroundBrush" Color="#0F172A"/>
+
+    <!-- Dialog / Modal -->
+    <SolidColorBrush x:Key="ModalBackgroundBrush" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="ModalBorderBrush" Color="#CBD5E1"/>
+    <SolidColorBrush x:Key="ModalHeaderBrush" Color="#0F172A"/>
+    <SolidColorBrush x:Key="ModalBodyBrush" Color="#334155"/>
+
+    <!-- Window Footer -->
+    <SolidColorBrush x:Key="FooterTextBrush" Color="#64748B"/>
+    <SolidColorBrush x:Key="FooterVersionBrush" Color="#475569"/>
+
+</ResourceDictionary>

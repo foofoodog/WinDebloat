@@ -9,8 +9,8 @@
         Height="820" Width="1060"
         MinHeight="600" MinWidth="1000"
         WindowStartupLocation="CenterScreen"
-        Background="#0A0E17"
-        Foreground="#F8FAFC"
+        Background="{DynamicResource WindowBackgroundBrush}"
+        Foreground="{DynamicResource WindowForegroundBrush}"
         FontFamily="Segoe UI">
 
     <Window.DataContext>
@@ -23,7 +23,7 @@
         <!-- TabItem Style -->
         <Style TargetType="TabItem">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="#94A3B8"/>
+            <Setter Property="Foreground" Value="{DynamicResource TabHeaderUnselectedBrush}"/>
             <Setter Property="FontSize" Value="13"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Padding" Value="8,8"/>
@@ -43,13 +43,13 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Border" Property="Background" Value="#111827"/>
-                                <Setter Property="Foreground" Value="#F8FAFC"/>
+                                <Setter TargetName="Border" Property="Background" Value="{DynamicResource TabHeaderHoverBackgroundBrush}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource TabHeaderHoverForegroundBrush}"/>
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter Property="Foreground" Value="#3B82F6"/>
-                                <Setter TargetName="Border" Property="BorderBrush" Value="#3B82F6"/>
-                                <Setter TargetName="Border" Property="Background" Value="#111827"/>
+                                <Setter Property="Foreground" Value="{DynamicResource TabHeaderSelectedBrush}"/>
+                                <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource TabHeaderSelectedBrush}"/>
+                                <Setter TargetName="Border" Property="Background" Value="{DynamicResource CardBackgroundBrush}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -59,7 +59,7 @@
 
         <!-- Modern CheckBox Style -->
         <Style TargetType="CheckBox">
-            <Setter Property="Foreground" Value="#F8FAFC"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="Cursor" Value="Hand"/>
         </Style>
@@ -95,9 +95,9 @@
                                 <Setter TargetName="ButtonBorder" Property="Background" Value="#1E40AF"/>
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="ButtonBorder" Property="Background" Value="#161F30"/>
-                                <Setter TargetName="ButtonBorder" Property="BorderBrush" Value="#253246"/>
-                                <Setter Property="Foreground" Value="#64748B"/>
+                                <Setter TargetName="ButtonBorder" Property="Background" Value="{DynamicResource ControlBackgroundBrush}"/>
+                                <Setter TargetName="ButtonBorder" Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}"/>
                                 <Setter Property="Cursor" Value="Arrow"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
@@ -108,13 +108,13 @@
 
         <!-- Secondary Button Style -->
         <Style x:Key="SecondaryButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="#1E293B"/>
-            <Setter Property="Foreground" Value="#E2E8F0"/>
+            <Setter Property="Background" Value="{DynamicResource ControlBackgroundBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource ControlForegroundBrush}"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="FontSize" Value="12"/>
             <Setter Property="Padding" Value="12,7"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="BorderBrush" Value="#334155"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -130,17 +130,17 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="ButtonBorder" Property="Background" Value="#283548"/>
-                                <Setter TargetName="ButtonBorder" Property="BorderBrush" Value="#475569"/>
-                                <Setter Property="Foreground" Value="#FFFFFF"/>
+                                <Setter TargetName="ButtonBorder" Property="Background" Value="{DynamicResource ControlHoverBackgroundBrush}"/>
+                                <Setter TargetName="ButtonBorder" Property="BorderBrush" Value="{DynamicResource ControlHoverBorderBrush}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="ButtonBorder" Property="Background" Value="#1E293B"/>
+                                <Setter TargetName="ButtonBorder" Property="Background" Value="{DynamicResource ControlBackgroundBrush}"/>
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="ButtonBorder" Property="Background" Value="#111827"/>
-                                <Setter TargetName="ButtonBorder" Property="BorderBrush" Value="#1F2937"/>
-                                <Setter Property="Foreground" Value="#475569"/>
+                                <Setter TargetName="ButtonBorder" Property="Background" Value="{DynamicResource CardBackgroundBrush}"/>
+                                <Setter TargetName="ButtonBorder" Property="BorderBrush" Value="{DynamicResource CardBorderBrush}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}"/>
                                 <Setter Property="Cursor" Value="Arrow"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
@@ -151,8 +151,8 @@
 
         <!-- Card DataTemplate for Items -->
         <DataTemplate x:Key="DebloatItemTemplate">
-            <Border Background="#111827" 
-                    BorderBrush="#1F2937" 
+            <Border Background="{DynamicResource CardBackgroundBrush}" 
+                    BorderBrush="{DynamicResource CardBorderBrush}" 
                     BorderThickness="1" 
                     CornerRadius="8" 
                     Margin="0,0,0,10" 
@@ -180,11 +180,11 @@
                             <TextBlock Text="{Binding Title}" 
                                        FontWeight="Bold" 
                                        FontSize="15" 
-                                       Foreground="#F8FAFC" />
+                                       Foreground="{DynamicResource TextPrimaryBrush}" />
 
                             <!-- Recommended Tag -->
-                            <Border Background="#052E16" 
-                                    BorderBrush="#15803D"
+                            <Border Background="{DynamicResource TagRecommendedBackgroundBrush}" 
+                                    BorderBrush="{DynamicResource TagRecommendedBorderBrush}"
                                     BorderThickness="1"
                                     CornerRadius="4" 
                                     Padding="6,2" 
@@ -193,12 +193,12 @@
                                 <TextBlock Text="RECOMMENDED" 
                                            FontSize="10" 
                                            FontWeight="Bold" 
-                                           Foreground="#4ADE80"/>
+                                           Foreground="{DynamicResource TagRecommendedForegroundBrush}"/>
                             </Border>
 
                             <!-- Admin Tag -->
-                            <Border Background="#450A0A" 
-                                    BorderBrush="#991B1B"
+                            <Border Background="{DynamicResource TagAdminBackgroundBrush}" 
+                                    BorderBrush="{DynamicResource TagAdminBorderBrush}"
                                     BorderThickness="1"
                                     CornerRadius="4" 
                                     Padding="6,2" 
@@ -207,12 +207,12 @@
                                 <TextBlock Text="ADMIN" 
                                            FontSize="10" 
                                            FontWeight="Bold" 
-                                           Foreground="#F87171"/>
+                                           Foreground="{DynamicResource TagAdminForegroundBrush}"/>
                             </Border>
 
                             <!-- Reboot Required Tag -->
-                            <Border Background="#2E1065" 
-                                    BorderBrush="#6B21A8"
+                            <Border Background="{DynamicResource TagRebootBackgroundBrush}" 
+                                    BorderBrush="{DynamicResource TagRebootBorderBrush}"
                                     BorderThickness="1"
                                     CornerRadius="4" 
                                     Padding="6,2" 
@@ -221,12 +221,12 @@
                                 <TextBlock Text="REBOOT NEEDED" 
                                            FontSize="10" 
                                            FontWeight="Bold" 
-                                           Foreground="#C084FC"/>
+                                           Foreground="{DynamicResource TagRebootForegroundBrush}"/>
                             </Border>
 
                             <!-- Bloatware Tag -->
-                            <Border Background="#172554" 
-                                    BorderBrush="#1D4ED8"
+                            <Border Background="{DynamicResource TagBloatwareBackgroundBrush}" 
+                                    BorderBrush="{DynamicResource TagBloatwareBorderBrush}"
                                     BorderThickness="1"
                                     CornerRadius="4" 
                                     Padding="6,2" 
@@ -235,12 +235,12 @@
                                 <TextBlock Text="BLOATWARE" 
                                            FontSize="10" 
                                            FontWeight="Bold" 
-                                           Foreground="#93C5FD"/>
+                                           Foreground="{DynamicResource TagBloatwareForegroundBrush}"/>
                             </Border>
 
                             <!-- Startup Status Tag -->
-                            <Border Background="#334155" 
-                                    BorderBrush="#475569"
+                            <Border Background="{DynamicResource TagStartupBackgroundBrush}" 
+                                    BorderBrush="{DynamicResource TagStartupBorderBrush}"
                                     BorderThickness="1"
                                     CornerRadius="4" 
                                     Padding="6,2" 
@@ -249,18 +249,18 @@
                                 <TextBlock Text="{Binding StartupStatus}" 
                                            FontSize="10" 
                                            FontWeight="Bold" 
-                                           Foreground="#CBD5E1"/>
+                                           Foreground="{DynamicResource TagStartupForegroundBrush}"/>
                             </Border>
                         </StackPanel>
 
                         <TextBlock Text="{Binding Description}" 
-                                   Foreground="#94A3B8" 
+                                   Foreground="{DynamicResource TextSecondaryBrush}" 
                                    FontSize="13" 
                                    TextWrapping="Wrap" 
                                    Margin="0,0,0,2"/>
 
                         <TextBlock Text="{Binding Details}" 
-                                   Foreground="#64748B" 
+                                   Foreground="{DynamicResource TextMutedBrush}" 
                                    FontSize="11" 
                                    FontFamily="Consolas"
                                    TextTrimming="CharacterEllipsis"/>
@@ -271,19 +271,19 @@
                                 VerticalAlignment="Center" 
                                 HorizontalAlignment="Right" 
                                 Margin="12,0,0,0">
-                        <Border Background="#161F30" 
-                                BorderBrush="#253246"
+                        <Border Background="{DynamicResource RamBadgeBackgroundBrush}" 
+                                BorderBrush="{DynamicResource RamBadgeBorderBrush}"
                                 BorderThickness="1"
                                 CornerRadius="6" 
                                 Padding="8,4" 
                                 HorizontalAlignment="Right">
                             <TextBlock Text="{Binding EstimatedMemory}" 
-                                       Foreground="#93C5FD" 
+                                       Foreground="{DynamicResource RamBadgeForegroundBrush}" 
                                        FontWeight="SemiBold" 
                                        FontSize="11"/>
                         </Border>
                         <TextBlock Text="{Binding StatusMessage}" 
-                                   Foreground="#64748B" 
+                                   Foreground="{DynamicResource TextMutedBrush}" 
                                    FontSize="11" 
                                    HorizontalAlignment="Right" 
                                    Margin="0,4,0,0"/>
@@ -291,9 +291,9 @@
                         <Button Command="{Binding DataContext.ShowDetailsCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                 CommandParameter="{Binding}"
                                 ToolTip="View feature details, technical effects, consequences, and documentation link"
-                                Background="#1E293B" 
-                                Foreground="#38BDF8" 
-                                BorderBrush="#0284C7" 
+                                Background="{DynamicResource TrimButtonBackgroundBrush}" 
+                                Foreground="{DynamicResource TrimButtonForegroundBrush}" 
+                                BorderBrush="{DynamicResource TrimButtonBorderBrush}" 
                                 BorderThickness="1" 
                                 FontWeight="SemiBold" 
                                 FontSize="11" 
@@ -313,8 +313,8 @@
 
         <!-- Revert Item Template for Undo Tab -->
         <DataTemplate x:Key="RevertItemTemplate">
-            <Border Background="#111827" 
-                    BorderBrush="#1F2937" 
+            <Border Background="{DynamicResource CardBackgroundBrush}" 
+                    BorderBrush="{DynamicResource CardBorderBrush}" 
                     BorderThickness="1" 
                     CornerRadius="8" 
                     Margin="0,0,0,10" 
@@ -342,11 +342,11 @@
                             <TextBlock Text="{Binding Title}" 
                                        FontWeight="Bold" 
                                        FontSize="15" 
-                                       Foreground="#F8FAFC" />
+                                       Foreground="{DynamicResource TextPrimaryBrush}" />
 
                             <!-- Status Badge -->
-                            <Border Background="#172554" 
-                                    BorderBrush="#1D4ED8"
+                            <Border Background="{DynamicResource TagBloatwareBackgroundBrush}" 
+                                    BorderBrush="{DynamicResource TagBloatwareBorderBrush}"
                                     BorderThickness="1"
                                     CornerRadius="4" 
                                     Padding="6,2" 
@@ -354,12 +354,12 @@
                                 <TextBlock Text="APPLIED" 
                                            FontSize="10" 
                                            FontWeight="Bold" 
-                                           Foreground="#93C5FD"/>
+                                           Foreground="{DynamicResource TagBloatwareForegroundBrush}"/>
                             </Border>
 
                             <!-- Category Badge -->
-                            <Border Background="#1E293B" 
-                                    BorderBrush="#334155"
+                            <Border Background="{DynamicResource ControlBackgroundBrush}" 
+                                    BorderBrush="{DynamicResource ControlBorderBrush}"
                                     BorderThickness="1"
                                     CornerRadius="4" 
                                     Padding="6,2" 
@@ -367,18 +367,18 @@
                                 <TextBlock Text="{Binding Category}" 
                                            FontSize="10" 
                                            FontWeight="Bold" 
-                                           Foreground="#CBD5E1"/>
+                                           Foreground="{DynamicResource ControlForegroundBrush}"/>
                             </Border>
                         </StackPanel>
 
                         <TextBlock Text="{Binding Description}" 
-                                   Foreground="#94A3B8" 
+                                   Foreground="{DynamicResource TextSecondaryBrush}" 
                                    FontSize="13" 
                                    TextWrapping="Wrap" 
                                    Margin="0,0,0,2"/>
 
                         <TextBlock Text="{Binding Details}" 
-                                   Foreground="#64748B" 
+                                   Foreground="{DynamicResource TextMutedBrush}" 
                                    FontSize="11" 
                                    FontFamily="Consolas"
                                    TextTrimming="CharacterEllipsis"/>
@@ -392,9 +392,9 @@
                         <Button Command="{Binding DataContext.UndoItemCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                 CommandParameter="{Binding}"
                                 Content="↩️ Revert Change" 
-                                Background="#1E293B" 
-                                Foreground="#93C5FD" 
-                                BorderBrush="#3B82F6" 
+                                Background="{DynamicResource ControlBackgroundBrush}" 
+                                Foreground="{DynamicResource RamBadgeForegroundBrush}" 
+                                BorderBrush="{DynamicResource ProgressBarFillBrush}" 
                                 BorderThickness="1" 
                                 FontWeight="Bold" 
                                 FontSize="12" 
@@ -407,14 +407,14 @@
                         <Button Command="{Binding DataContext.ShowDetailsCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                 CommandParameter="{Binding}"
                                 ToolTip="View feature details, technical effects, and consequences"
-                                Background="#1E293B" 
-                                Foreground="#38BDF8" 
-                                BorderBrush="#0284C7" 
+                                Background="{DynamicResource TrimButtonBackgroundBrush}" 
+                                Foreground="{DynamicResource TrimButtonForegroundBrush}" 
+                                BorderBrush="{DynamicResource TrimButtonBorderBrush}" 
                                 BorderThickness="1" 
                                 FontWeight="SemiBold" 
                                 FontSize="11" 
                                 Padding="8,3" 
-                                Margin="0,5,0,0"
+                                Margin="0,5,0,0" 
                                 HorizontalAlignment="Right"
                                 Cursor="Hand">
                             <Button.Resources>
@@ -423,7 +423,7 @@
                             <TextBlock Text="ℹ️ Details"/>
                         </Button>
                         <TextBlock Text="{Binding StatusMessage}" 
-                                   Foreground="#64748B" 
+                                   Foreground="{DynamicResource TextMutedBrush}" 
                                    FontSize="11" 
                                    HorizontalAlignment="Right" 
                                    Margin="0,4,0,0"/>
@@ -462,16 +462,16 @@
                 <TextBlock Text="Windows Debloat &amp; RAM Optimizer" 
                            FontSize="24" 
                            FontWeight="Bold" 
-                           Foreground="#F8FAFC" />
+                           Foreground="{DynamicResource TextPrimaryBrush}" />
                 <TextBlock Text="Free memory and disable unnecessary background apps and services" 
                            FontSize="13" 
-                           Foreground="#94A3B8" />
+                           Foreground="{DynamicResource TextSecondaryBrush}" />
             </StackPanel>
 
             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                 <!-- Admin Status Badge -->
-                <Border Background="#111827" 
-                        BorderBrush="#1F2937" 
+                <Border Background="{DynamicResource CardBackgroundBrush}" 
+                        BorderBrush="{DynamicResource CardBorderBrush}" 
                         BorderThickness="1" 
                         CornerRadius="6" 
                         Padding="10,6" 
@@ -481,17 +481,17 @@
                         <TextBlock Text="{Binding AdminBadgeText}" 
                                    FontWeight="SemiBold" 
                                    FontSize="12" 
-                                   Foreground="#60A5FA"/>
+                                   Foreground="{DynamicResource RamBadgeForegroundBrush}"/>
                     </StackPanel>
                 </Border>
 
                 <!-- Relaunch as Admin Button -->
                 <Button Command="{Binding RelaunchAdminCommand}" 
                         Content="🛡️ Relaunch as Admin" 
-                        Background="#1E293B" 
-                        Foreground="#FCA5A5" 
-                        BorderBrush="#EF4444"
-                        BorderThickness="1"
+                        Background="{DynamicResource TagAdminBackgroundBrush}" 
+                        Foreground="{DynamicResource TagAdminForegroundBrush}" 
+                        BorderBrush="{DynamicResource TagAdminBorderBrush}"
+                        BorderThickness="1" 
                         FontWeight="SemiBold" 
                         Padding="12,6" 
                         Margin="0,0,10,0" 
@@ -507,12 +507,31 @@
                 <!-- Refresh Button -->
                 <Button Command="{Binding RefreshCommand}" 
                         Content="🔄 Refresh Scan" 
-                        Background="#1E293B" 
-                        Foreground="#F1F5F9" 
-                        BorderBrush="#334155"
-                        BorderThickness="1"
+                        Background="{DynamicResource ControlBackgroundBrush}" 
+                        Foreground="{DynamicResource ControlForegroundBrush}" 
+                        BorderBrush="{DynamicResource ControlBorderBrush}"
+                        BorderThickness="1" 
                         FontWeight="SemiBold" 
                         Padding="14,6" 
+                        Margin="0,0,10,0"
+                        Cursor="Hand">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="6"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+
+                <!-- Theme Toggle Button -->
+                <Button Command="{Binding ToggleThemeCommand}" 
+                        Content="{Binding ThemeToggleText}" 
+                        ToolTip="{Binding ThemeToggleToolTip}"
+                        Background="{DynamicResource ControlBackgroundBrush}" 
+                        Foreground="{DynamicResource ControlForegroundBrush}" 
+                        BorderBrush="{DynamicResource ControlBorderBrush}"
+                        BorderThickness="1" 
+                        FontWeight="SemiBold" 
+                        Padding="12,6" 
                         Cursor="Hand">
                     <Button.Resources>
                         <Style TargetType="Border">
@@ -525,8 +544,8 @@
 
         <!-- Stern System Integrity Warning Banner -->
         <Border Grid.Row="1" 
-                Background="#131926" 
-                BorderBrush="#991B1B" 
+                Background="{DynamicResource WarningBannerBackgroundBrush}" 
+                BorderBrush="{DynamicResource WarningBannerBorderBrush}" 
                 BorderThickness="3,1,1,1" 
                 CornerRadius="8" 
                 Padding="14,10" 
@@ -542,20 +561,20 @@
                     <TextBlock Text="USE AT YOUR OWN RISK — SYSTEM INTEGRITY WARNING" 
                                FontWeight="Bold" 
                                FontSize="13" 
-                               Foreground="#F87171"/>
+                               Foreground="{DynamicResource WarningBannerTitleBrush}"/>
                     <TextBlock Text="Modifying core Windows components, disabling system services, or removing packages can cause system instability, break functionality, or brick your machine. Create a System Restore Point before making changes." 
                                FontWeight="Normal" 
                                FontSize="12" 
-                               Foreground="#CBD5E1" 
+                               Foreground="{DynamicResource WarningBannerTextBrush}" 
                                TextWrapping="Wrap" 
                                Margin="0,2,0,0"/>
                 </StackPanel>
                 <Button Grid.Column="2" 
                         Command="{Binding CreateRestorePointCommand}" 
                         Content="🛡️ Create Restore Point" 
-                        Background="#1E293B" 
-                        Foreground="#FCA5A5" 
-                        BorderBrush="#EF4444" 
+                        Background="{DynamicResource TagAdminBackgroundBrush}" 
+                        Foreground="{DynamicResource TagAdminForegroundBrush}" 
+                        BorderBrush="{DynamicResource TagAdminBorderBrush}" 
                         BorderThickness="1" 
                         FontWeight="SemiBold" 
                         FontSize="12" 
@@ -572,8 +591,8 @@
 
         <!-- RAM Monitor Card -->
         <Border Grid.Row="2" 
-                Background="#111827" 
-                BorderBrush="#1F2937" 
+                Background="{DynamicResource CardBackgroundBrush}" 
+                BorderBrush="{DynamicResource CardBorderBrush}" 
                 BorderThickness="1" 
                 CornerRadius="8" 
                 Padding="16,12" 
@@ -595,13 +614,13 @@
                         <TextBlock Text="🧠 Physical Memory Usage" 
                                    FontWeight="SemiBold" 
                                    FontSize="15" 
-                                   Foreground="#F8FAFC"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"
                                    VerticalAlignment="Center"/>
                         <Button Command="{Binding TrimRamCommand}"
                                 ToolTip="Flush idle process working sets to reclaim dormant physical RAM"
-                                Background="#1E293B" 
-                                Foreground="#38BDF8" 
-                                BorderBrush="#0284C7" 
+                                Background="{DynamicResource TrimButtonBackgroundBrush}" 
+                                Foreground="{DynamicResource TrimButtonForegroundBrush}" 
+                                BorderBrush="{DynamicResource TrimButtonBorderBrush}" 
                                 BorderThickness="1" 
                                 FontWeight="SemiBold" 
                                 FontSize="11" 
@@ -617,15 +636,15 @@
                     </StackPanel>
 
                     <StackPanel Grid.Column="2" Orientation="Horizontal">
-                        <TextBlock Text="Used: " Foreground="#64748B" FontSize="13"/>
-                        <TextBlock Text="{Binding MemoryUsedGB, StringFormat='{}{0:F2} GB'}" FontWeight="Bold" Foreground="#F8FAFC" FontSize="13"/>
-                        <TextBlock Text="  |  Free: " Foreground="#64748B" FontSize="13"/>
-                        <TextBlock Text="{Binding MemoryAvailableGB, StringFormat='{}{0:F2} GB'}" FontWeight="Bold" Foreground="#F8FAFC" FontSize="13"/>
-                        <TextBlock Text="  |  Total: " Foreground="#64748B" FontSize="13"/>
-                        <TextBlock Text="{Binding MemoryTotalGB, StringFormat='{}{0:F2} GB'}" Foreground="#F8FAFC" FontSize="13"/>
-                        <TextBlock Text=" (" Foreground="#64748B" FontSize="13"/>
-                        <TextBlock Text="{Binding MemoryPercent, StringFormat='{}{0}%'}" FontWeight="Bold" Foreground="#38BDF8" FontSize="13"/>
-                        <TextBlock Text=" used)" Foreground="#64748B" FontSize="13"/>
+                        <TextBlock Text="Used: " Foreground="{DynamicResource TextMutedBrush}" FontSize="13"/>
+                        <TextBlock Text="{Binding MemoryUsedGB, StringFormat='{}{0:F2} GB'}" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13"/>
+                        <TextBlock Text="  |  Free: " Foreground="{DynamicResource TextMutedBrush}" FontSize="13"/>
+                        <TextBlock Text="{Binding MemoryAvailableGB, StringFormat='{}{0:F2} GB'}" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13"/>
+                        <TextBlock Text="  |  Total: " Foreground="{DynamicResource TextMutedBrush}" FontSize="13"/>
+                        <TextBlock Text="{Binding MemoryTotalGB, StringFormat='{}{0:F2} GB'}" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13"/>
+                        <TextBlock Text=" (" Foreground="{DynamicResource TextMutedBrush}" FontSize="13"/>
+                        <TextBlock Text="{Binding MemoryPercent, StringFormat='{}{0}%'}" FontWeight="Bold" Foreground="{DynamicResource RamStatPercentBrush}" FontSize="13"/>
+                        <TextBlock Text=" used)" Foreground="{DynamicResource TextMutedBrush}" FontSize="13"/>
                     </StackPanel>
                 </Grid>
 
@@ -635,8 +654,8 @@
                              Minimum="0" 
                              Maximum="100" 
                              Value="{Binding MemoryPercent}" 
-                             Foreground="#3B82F6" 
-                             Background="#1E293B" 
+                             Foreground="{DynamicResource ProgressBarFillBrush}" 
+                             Background="{DynamicResource ProgressBarTrackBrush}" 
                              BorderThickness="0"/>
             </Grid>
         </Border>
@@ -691,8 +710,8 @@
 
                     <!-- Revert Toolbar -->
                     <Border Grid.Row="0" 
-                            Background="#111827" 
-                            BorderBrush="#1F2937" 
+                            Background="{DynamicResource CardBackgroundBrush}" 
+                            BorderBrush="{DynamicResource CardBorderBrush}" 
                             BorderThickness="1" 
                             CornerRadius="8" 
                             Padding="14,10" 
@@ -707,10 +726,10 @@
                                 <TextBlock Text="↩️ Full Undo &amp; Revert Center" 
                                            FontWeight="Bold" 
                                            FontSize="14" 
-                                           Foreground="#F8FAFC"/>
+                                           Foreground="{DynamicResource TextPrimaryBrush}"/>
                                 <TextBlock Text="Revert previously applied optimizations, restore registry tweaks, or re-enable stopped services." 
                                            FontSize="12" 
-                                           Foreground="#94A3B8" 
+                                           Foreground="{DynamicResource TextSecondaryBrush}" 
                                            Margin="0,2,0,0"/>
                             </StackPanel>
 
@@ -733,10 +752,10 @@
 
                                 <Button Command="{Binding ClearHistoryCommand}" 
                                         Content="🗑️ Clear History" 
-                                        Background="#1E293B" 
-                                        Foreground="#FCA5A5" 
-                                        BorderBrush="#EF4444"
-                                        BorderThickness="1"
+                                        Background="{DynamicResource TagAdminBackgroundBrush}" 
+                                        Foreground="{DynamicResource TagAdminForegroundBrush}" 
+                                        BorderBrush="{DynamicResource TagAdminBorderBrush}"
+                                        BorderThickness="1" 
                                         FontWeight="SemiBold" 
                                         Padding="12,6" 
                                         Margin="8,0,0,0" 
@@ -752,8 +771,8 @@
 
                     <!-- Empty State Notice -->
                     <Border Grid.Row="1" 
-                            Background="#111827" 
-                            BorderBrush="#1F2937" 
+                            Background="{DynamicResource CardBackgroundBrush}" 
+                            BorderBrush="{DynamicResource CardBorderBrush}" 
                             BorderThickness="1" 
                             CornerRadius="8" 
                             Padding="40,30" 
@@ -764,11 +783,11 @@
                             <TextBlock Text="No Applied Changes to Revert" 
                                        FontWeight="Bold" 
                                        FontSize="16" 
-                                       Foreground="#F8FAFC" 
+                                       Foreground="{DynamicResource TextPrimaryBrush}" 
                                        HorizontalAlignment="Center" 
                                        Margin="0,0,0,6"/>
                             <TextBlock Text="When you apply optimizations, disable services, or modify startup entries, items that support rollback will appear here." 
-                                       Foreground="#94A3B8" 
+                                       Foreground="{DynamicResource TextSecondaryBrush}" 
                                        FontSize="13" 
                                        HorizontalAlignment="Center" 
                                        TextWrapping="Wrap" 
@@ -789,8 +808,8 @@
 
         <!-- Bottom Controls -->
         <Border Grid.Row="4" 
-                Background="#111827" 
-                BorderBrush="#1F2937" 
+                Background="{DynamicResource CardBackgroundBrush}" 
+                BorderBrush="{DynamicResource CardBorderBrush}" 
                 BorderThickness="1" 
                 CornerRadius="8" 
                 Padding="14,10" 
@@ -820,7 +839,7 @@
 
                 <TextBlock Grid.Column="1" 
                            Text="{Binding ProgressText}" 
-                           Foreground="#94A3B8" 
+                           Foreground="{DynamicResource TextSecondaryBrush}" 
                            FontSize="12" 
                            VerticalAlignment="Center" 
                            HorizontalAlignment="Center" 
@@ -842,8 +861,8 @@
 
         <!-- Execution Log Console -->
         <Border Grid.Row="5" 
-                Background="#070A10" 
-                BorderBrush="#1F2937" 
+                Background="{DynamicResource LogBackgroundBrush}" 
+                BorderBrush="{DynamicResource LogBorderBrush}" 
                 BorderThickness="1" 
                 CornerRadius="6" 
                 Padding="10">
@@ -854,7 +873,7 @@
                 </Grid.RowDefinitions>
 
                 <TextBlock Text="📋 Activity Log" 
-                           Foreground="#64748B" 
+                           Foreground="{DynamicResource LogHeaderBrush}" 
                            FontSize="11" 
                            FontWeight="SemiBold" 
                            Margin="0,0,0,6"/>
@@ -863,7 +882,7 @@
                          ItemsSource="{Binding Logs}" 
                          Background="Transparent" 
                          BorderThickness="0" 
-                         Foreground="#94A3B8" 
+                         Foreground="{DynamicResource LogForegroundBrush}" 
                          FontFamily="Consolas" 
                          FontSize="11" 
                          ScrollViewer.HorizontalScrollBarVisibility="Auto" 
@@ -879,13 +898,13 @@
             </Grid.ColumnDefinitions>
 
             <TextBlock Text="Windows Debloat &amp; RAM Optimizer" 
-                       Foreground="#475569" 
+                       Foreground="{DynamicResource FooterTextBrush}" 
                        FontSize="11" 
                        VerticalAlignment="Center"/>
 
             <TextBlock Grid.Column="1" 
                        Text="{Binding AppVersion, StringFormat='WinDebloat {0}'}" 
-                       Foreground="#64748B" 
+                       Foreground="{DynamicResource FooterVersionBrush}" 
                        FontSize="11" 
                        FontWeight="SemiBold" 
                        FontFamily="Consolas, Segoe UI"

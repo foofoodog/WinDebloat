@@ -145,6 +145,10 @@ namespace WinDebloat.ViewModels
 
         public bool CanApplySelected => !IsBusy && SelectedCount > 0;
 
+        public string ThemeToggleText => ThemeService.CurrentTheme == AppTheme.Dark ? "☀️ Light" : "🌙 Dark";
+        public string ThemeToggleToolTip => ThemeService.CurrentTheme == AppTheme.Dark ? "Switch to Light Theme" : "Switch to Dark Theme";
+
+        public ICommand ToggleThemeCommand { get; }
         public ICommand RefreshCommand { get; }
         public ICommand SelectRecommendedCommand { get; }
         public ICommand SelectAllCommand { get; }
@@ -162,6 +166,9 @@ namespace WinDebloat.ViewModels
 
         public MainViewModel()
         {
+            ToggleThemeCommand = new RelayCommand(ThemeService.ToggleTheme);
+            ThemeService.ThemeChanged += OnThemeChanged;
+
             RefreshCommand = new RelayCommand(async () => await RefreshAsync());
             SelectRecommendedCommand = new RelayCommand(SelectRecommended);
             SelectAllCommand = new RelayCommand(SelectAll);
@@ -185,6 +192,12 @@ namespace WinDebloat.ViewModels
 
             IsAdmin = SystemHelper.IsAdministrator();
             UpdateMemoryStats();
+        }
+
+        private void OnThemeChanged(AppTheme theme)
+        {
+            OnPropertyChanged(nameof(ThemeToggleText));
+            OnPropertyChanged(nameof(ThemeToggleToolTip));
         }
 
         private void RelaunchAdmin()

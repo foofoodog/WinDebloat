@@ -138,8 +138,8 @@ WinDebloat was built on five core architectural pillars to provide a safe, trans
 - **Pre-Removal Restore Point Prompt**: Before any changes are committed, WinDebloat prompts you with an optional System Restore Point snapshot modal.
 - **Active Restore Point Progress & Verification**: Dedicated progress modal displaying live Volume Shadow Copy (VSS) volume snapshot status, automatic 24-hour rate limit bypass, and post-creation verification against Windows System Restore.
 - **Elevation When Needed**: Runs in standard mode without forcing UAC upfront; automatically prompts for elevation only when applying actions that require Administrator rights.
-- **Streamlined Dark UI**: Refined dark palette with cobalt blue accents, dark slate secondary surfaces, evenly spaced tab navigation with live per-category selection count badges, and immediate button state activation.
-- **Modern Dark Dialogs**: Sleek, borderless dark-slate modal dialogs with soft drop shadows and contextual icons instead of dated Win32 message boxes.
+- **Dynamic Light & Dark Themes**: Refined palettes for both Dark and Light modes with cobalt blue accents, clean slate secondary surfaces, evenly spaced tab navigation with live per-category selection count badges, and immediate button state activation. Includes a one-click header toggle, automatic Windows system preference detection (`AppsUseLightTheme`), and preference persistence across launches.
+- **Modern Modal Dialogs**: Sleek modal dialogs with soft drop shadows, theme-aware styling, and contextual icons instead of dated Win32 message boxes.
 - **Reboot Indicators**: Identifies tweaks requiring a system restart or Windows Explorer reload with a purple `REBOOT NEEDED` badge, and offers a one-click restart prompt upon completion.
 
 ---
