@@ -447,6 +447,8 @@
             <RowDefinition Height="Auto" />
             <!-- Log Console -->
             <RowDefinition Height="140" />
+            <!-- Footer -->
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <!-- Header -->
@@ -868,5 +870,27 @@
                          ScrollViewer.VerticalScrollBarVisibility="Auto"/>
             </Grid>
         </Border>
+
+        <!-- Window Footer -->
+        <Grid Grid.Row="6" Margin="4,8,4,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Text="Windows Debloat &amp; RAM Optimizer" 
+                       Foreground="#475569" 
+                       FontSize="11" 
+                       VerticalAlignment="Center"/>
+
+            <TextBlock Grid.Column="1" 
+                       Text="{Binding AppVersion, StringFormat='WinDebloat {0}'}" 
+                       Foreground="#64748B" 
+                       FontSize="11" 
+                       FontWeight="SemiBold" 
+                       FontFamily="Consolas, Segoe UI"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center"/>
+        </Grid>
     </Grid>
 </Window>

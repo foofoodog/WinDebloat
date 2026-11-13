@@ -134,6 +134,15 @@ namespace WinDebloat.ViewModels
             set { _selectedCount = value; OnPropertyChanged(); }
         }
 
+        public string AppVersion
+        {
+            get
+            {
+                var ver = typeof(MainViewModel).Assembly.GetName().Version;
+                return ver != null ? $"v{ver.Major}.{ver.Minor}.{ver.Build}" : "v1.2.0";
+            }
+        }
+
         public bool CanApplySelected => !IsBusy && SelectedCount > 0;
 
         public ICommand RefreshCommand { get; }
