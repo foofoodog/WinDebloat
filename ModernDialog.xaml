@@ -56,7 +56,7 @@
             </Grid>
 
             <!-- Message Body -->
-            <ScrollViewer Grid.Row="1" MaxHeight="320" VerticalScrollBarVisibility="Auto" Margin="0,0,0,22">
+            <ScrollViewer Grid.Row="1" MaxHeight="320" VerticalScrollBarVisibility="Auto" Margin="0,0,0,16">
                 <TextBlock Name="MessageText" 
                            Text="Dialog message content" 
                            Foreground="#CBD5E1" 
@@ -64,6 +64,18 @@
                            TextWrapping="Wrap" 
                            LineHeight="22"/>
             </ScrollViewer>
+
+            <!-- Active Task Progress Bar -->
+            <ProgressBar Name="DialogProgressBar" 
+                         Grid.Row="1"
+                         Height="6" 
+                         IsIndeterminate="True" 
+                         Foreground="#3B82F6" 
+                         Background="#1E293B" 
+                         BorderThickness="0" 
+                         VerticalAlignment="Bottom"
+                         Margin="0,0,0,0" 
+                         Visibility="Collapsed"/>
 
             <!-- Buttons Row -->
             <StackPanel Grid.Row="2" 

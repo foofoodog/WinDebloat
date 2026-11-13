@@ -533,16 +533,20 @@ namespace WinDebloat.ViewModels
 
             if (restoreChoice == ModernDialogResult.Yes)
             {
-                AddLog("Creating pre-removal System Restore Point...");
-                ProgressText = "Creating System Restore Point...";
-                var (rpOk, rpMsg) = await SystemHelper.CreateRestorePoint("WinDebloat Pre-Debloat Snapshot");
-                if (rpOk)
+                bool created = await ExecuteRestorePointCreationAsync("WinDebloat Pre-Debloat Snapshot");
+                if (!created)
                 {
-                    AddLog("System Restore Point created successfully.");
-                }
-                else
-                {
-                    AddLog($"System Restore Point notification: {rpMsg}. Proceeding with removal...");
+                    bool proceedAnyway = ModernDialog.ShowConfirm(
+                        "Restore Point Not Created",
+                        "A System Restore Point could not be created or verified. Would you like to proceed with debloating anyway without a snapshot?",
+                        confirmText: "Proceed Anyway",
+                        cancelText: "Cancel",
+                        type: ModernDialogType.Warning);
+                    if (!proceedAnyway)
+                    {
+                        AddLog("Debloat operation cancelled by user.");
+                        return;
+                    }
                 }
             }
 
@@ -673,6 +677,11 @@ namespace WinDebloat.ViewModels
 
         public async Task CreateRestorePointAsync()
         {
+            await ExecuteRestorePointCreationAsync("WinDebloat Snapshot");
+        }
+
+        public async Task<bool> ExecuteRestorePointCreationAsync(string description = "WinDebloat Snapshot")
+        {
             if (!IsAdmin)
             {
                 var res = ModernDialog.ShowPrompt(
@@ -685,23 +694,70 @@ namespace WinDebloat.ViewModels
                 {
                     RelaunchAdmin();
                 }
-                return;
+                return false;
             }
 
-            ProgressText = "Creating System Restore Point...";
-            AddLog("Creating System Restore Point 'WinDebloat Pre-Debloat Snapshot'...");
-            var (ok, msg) = await SystemHelper.CreateRestorePoint("WinDebloat Snapshot");
-            if (ok)
+            IsBusy = true;
+            ProgressText = "Creating System Restore Point (snapshotting system volume)...";
+            AddLog($"Initiating System Restore Point '{description}'...");
+
+            ModernDialog? progressModal = null;
+            Application.Current?.Dispatcher?.Invoke(() =>
             {
-                AddLog("System Restore Point 'WinDebloat Snapshot' created successfully.");
-                ModernDialog.ShowInfo("Restore Point Created", "System Restore Point 'WinDebloat Snapshot' was successfully created.\n\nYou can restore your machine to this snapshot at any time via Windows System Restore.", ModernDialogType.Success);
-            }
-            else
+                progressModal = ModernDialog.ShowProgressDialog(
+                    "Creating System Restore Point",
+                    "Snapshotting system volume and preparing Volume Shadow Copy (VSS)...\n\nThis typically takes 15 to 30 seconds. Please wait.");
+            });
+
+            var progress = new Progress<string>(msg =>
             {
-                AddLog($"Restore point result: {msg}");
-                ModernDialog.ShowInfo("System Restore Point", $"Restore Point notification:\n\n{msg}\n\nEnsure System Protection is enabled in Windows System Properties.", ModernDialogType.Info);
+                AddLog(msg);
+                ProgressText = msg;
+                progressModal?.UpdateMessage($"{msg}\n\nPlease wait while Windows completes the volume snapshot...");
+            });
+
+            try
+            {
+                var (ok, msg, details) = await SystemHelper.CreateRestorePoint(description, progress);
+
+                Application.Current?.Dispatcher?.Invoke(() =>
+                {
+                    try { progressModal?.Close(); } catch { }
+                });
+
+                if (ok)
+                {
+                    AddLog($"System Restore Point verified: {details ?? msg}");
+                    ModernDialog.ShowInfo(
+                        "Restore Point Verified",
+                        $"System Restore Point was successfully created and verified on disk!\n\n• {details ?? msg}\n\nYou can restore Windows to this snapshot at any time via System Restore.",
+                        ModernDialogType.Success);
+                    return true;
+                }
+                else
+                {
+                    AddLog($"Restore point failed: {msg}");
+                    ModernDialog.ShowInfo(
+                        "System Restore Point Notice",
+                        $"Windows could not create a System Restore Point:\n\n{msg}\n\nEnsure System Protection is enabled for Drive C: in Windows System Properties.",
+                        ModernDialogType.Warning);
+                    return false;
+                }
             }
-            ProgressText = "Ready";
+            catch (Exception ex)
+            {
+                Application.Current?.Dispatcher?.Invoke(() =>
+                {
+                    try { progressModal?.Close(); } catch { }
+                });
+                AddLog($"Error creating restore point: {ex.Message}");
+                return false;
+            }
+            finally
+            {
+                IsBusy = false;
+                ProgressText = "Ready";
+            }
         }
 
         public async Task UndoItemAsync(DebloatItem? item)

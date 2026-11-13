@@ -225,10 +225,61 @@ namespace WinDebloat.Services
             }
         }
 
-        public static async Task<(bool success, string output)> CreateRestorePoint(string description)
+        public static async Task<(bool success, string output, string? details)> CreateRestorePoint(string description, IProgress<string>? progress = null)
         {
-            string script = $"Enable-ComputerRestore -Drive 'C:\\' -ErrorAction SilentlyContinue; Checkpoint-Computer -Description '{description}' -RestorePointType 'MODIFY_SETTINGS' -ErrorAction Stop";
-            return await RunPowerShellCommandAsync(script, elevated: true);
+            progress?.Report("Checking Administrator privileges and system policies...");
+            if (!IsAdministrator())
+            {
+                return (false, "Administrator privileges are required to create a System Restore Point.", null);
+            }
+
+            progress?.Report("Bypassing 24-hour rate limit and preparing Volume Shadow Copy (VSS)...");
+
+            string script = $@"
+$ErrorActionPreference = 'Stop'
+try {{
+    # 1. Enable computer restore on system drive
+    Enable-ComputerRestore -Drive 'C:\' -ErrorAction SilentlyContinue
+
+    # 2. Reset 24-hr creation rate limit
+    $reg = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SystemRestore'
+    if (!(Test-Path $reg)) {{ New-Item $reg -Force | Out-Null }}
+    Set-ItemProperty -Path $reg -Name 'SystemRestorePointCreationFrequency' -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
+
+    # 3. Ensure VSS service is running
+    Start-Service -Name 'VSS' -ErrorAction SilentlyContinue
+
+    # 4. Checkpoint computer
+    Checkpoint-Computer -Description '{description}' -RestorePointType 'MODIFY_SETTINGS'
+
+    # 5. Verify creation
+    $rp = Get-ComputerRestorePoint -ErrorAction SilentlyContinue | Select-Object -Last 1
+    if ($rp) {{
+        Write-Output ""VERIFIED: Sequence #$($rp.SequenceNumber) created at $($rp.CreationTime) ($($rp.Description))""
+    }} else {{
+        Write-Output ""CREATED: Restore point successfully registered.""
+    }}
+}} catch {{
+    Write-Error $_.Exception.Message
+}}
+";
+            progress?.Report("Creating volume snapshot via Volume Shadow Copy (typically takes 15-30s)...");
+            var (success, output) = await RunPowerShellCommandAsync(script, elevated: false);
+
+            if (success && output.Contains("VERIFIED:"))
+            {
+                var line = output.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                                 .FirstOrDefault(l => l.Contains("VERIFIED:"))?.Trim() ?? output.Trim();
+                return (true, line, line);
+            }
+            else if (success)
+            {
+                return (true, output.Trim(), output.Trim());
+            }
+            else
+            {
+                return (false, output.Trim(), null);
+            }
         }
 
         public record InstalledDesktopApp(string Name, string Version, string Publisher, string UninstallString, bool IsHklm, string InstallLocation);

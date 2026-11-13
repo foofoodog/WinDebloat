@@ -154,5 +154,41 @@ namespace WinDebloat
         {
             ShowPrompt(title, message, primaryText: "OK", secondaryText: null, cancelText: null, type: type);
         }
+
+        public static ModernDialog ShowProgressDialog(string title, string initialMessage, Window? owner = null)
+        {
+            var dialog = new ModernDialog();
+            dialog.TitleText.Text = title;
+            dialog.MessageText.Text = initialMessage;
+            dialog.DialogProgressBar.Visibility = Visibility.Visible;
+            dialog.PrimaryBtn.Visibility = Visibility.Collapsed;
+            dialog.SecondaryBtn.Visibility = Visibility.Collapsed;
+            dialog.CancelBtn.Visibility = Visibility.Collapsed;
+            dialog.IconText.Text = "🛡️";
+            dialog.IconBadge.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#1E3A8A"));
+
+            owner ??= Application.Current?.MainWindow;
+            if (owner != null && owner.IsVisible)
+            {
+                dialog.Owner = owner;
+                dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            }
+            else
+            {
+                dialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            }
+
+            dialog.Show();
+            dialog.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Render);
+            return dialog;
+        }
+
+        public void UpdateMessage(string message)
+        {
+            Application.Current?.Dispatcher?.Invoke(() =>
+            {
+                MessageText.Text = message;
+            }, System.Windows.Threading.DispatcherPriority.Render);
+        }
     }
 }
