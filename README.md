@@ -65,7 +65,9 @@
 
 ### Smart Elevation, Pre-Removal Snapshot & Modern UI
 - **Pre-Removal Restore Point Prompt**: Before any changes are committed, WinDebloat prompts you with an optional System Restore Point snapshot modal.
+- **Active Restore Point Progress & Verification**: Dedicated progress modal displaying live Volume Shadow Copy (VSS) volume snapshot status, automatic 24-hour rate limit bypass, and post-creation verification against Windows System Restore.
 - **Elevation When Needed**: Runs in standard mode without forcing UAC upfront; automatically prompts for elevation only when applying actions that require Administrator rights.
+- **Streamlined Dark UI**: Refined dark palette with cobalt blue accents, dark slate secondary surfaces, evenly spaced tab navigation with live per-category selection count badges, and immediate button state activation.
 - **Modern Dark Dialogs**: Sleek, borderless dark-slate modal dialogs with soft drop shadows and contextual icons instead of dated Win32 message boxes.
 - **Reboot Indicators**: Identifies tweaks requiring a system restart or Windows Explorer reload with a purple `REBOOT NEEDED` badge, and offers a one-click restart prompt upon completion.
 
@@ -86,7 +88,7 @@
 2. Right-click and choose **Run as administrator** (or launch normally; the app prompts for elevation when applying admin-level actions).
 3. *(Recommended)* Click **Create Restore Point** in the top warning banner.
 4. Select the optimizations you want to apply, or click **Select Recommended**.
-5. Click **Apply Selected Actions**.
+5. Click **Apply Selected**.
 
 ---
 
