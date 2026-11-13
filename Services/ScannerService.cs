@@ -703,8 +703,13 @@ namespace WinDebloat.Services
             int ghostEdgeCount = 0;
             try
             {
-                ghostChromeCount = Process.GetProcessesByName("chrome").Count(p => p.MainWindowHandle == IntPtr.Zero);
-                ghostEdgeCount = Process.GetProcessesByName("msedge").Count(p => p.MainWindowHandle == IntPtr.Zero);
+                var chromeProcs = Process.GetProcessesByName("chrome");
+                bool hasVisibleChrome = chromeProcs.Any(p => p.MainWindowHandle != IntPtr.Zero);
+                if (!hasVisibleChrome) ghostChromeCount = chromeProcs.Length;
+
+                var edgeProcs = Process.GetProcessesByName("msedge");
+                bool hasVisibleEdge = edgeProcs.Any(p => p.MainWindowHandle != IntPtr.Zero);
+                if (!hasVisibleEdge) ghostEdgeCount = edgeProcs.Length;
             }
             catch { }
 
@@ -715,12 +720,12 @@ namespace WinDebloat.Services
                     Id = "tweak_kill_ghost_browsers",
                     Category = DebloatCategory.SystemTweak,
                     Title = "Clean Ghost / Orphaned Browser Processes",
-                    Description = $"Detected background headless browser processes ({ghostChromeCount} Chrome, {ghostEdgeCount} Edge) lingering in RAM without open browser windows.",
+                    Description = $"Detected background headless browser processes ({ghostChromeCount} Chrome, {ghostEdgeCount} Edge) lingering in RAM with no open browser windows.",
                     Details = "Terminates headless background chrome.exe and msedge.exe processes that persist after windows are closed.",
                     EstimatedMemory = "~200-600 MB",
                     IsRecommended = true,
                     IsSelected = true,
-                    Consequences = "Terminates lingering background chrome.exe and msedge.exe processes that have no visible windows, freeing occupied RAM.",
+                    Consequences = "Terminates lingering background chrome.exe and msedge.exe processes when no browser windows are open, freeing occupied RAM. If a browser window is currently open, it is skipped to protect active tabs.",
                     HelpUrl = "https://support.google.com/chrome/answer/1184722",
                     ApplyAction = async (progress) =>
                     {
@@ -729,16 +734,21 @@ namespace WinDebloat.Services
                         long bytesFreed = 0;
                         foreach (var name in new[] { "chrome", "msedge" })
                         {
-                            foreach (var p in Process.GetProcessesByName(name))
+                            var procs = Process.GetProcessesByName(name);
+                            bool hasVisible = procs.Any(p => p.MainWindowHandle != IntPtr.Zero);
+                            if (hasVisible)
+                            {
+                                progress.Report($"{name}.exe has an active window open; skipping to protect active tabs.");
+                                continue;
+                            }
+
+                            foreach (var p in procs)
                             {
                                 try
                                 {
-                                    if (p.MainWindowHandle == IntPtr.Zero)
-                                    {
-                                        bytesFreed += p.WorkingSet64;
-                                        p.Kill();
-                                        killed++;
-                                    }
+                                    bytesFreed += p.WorkingSet64;
+                                    p.Kill();
+                                    killed++;
                                 }
                                 catch { }
                                 finally { try { p.Dispose(); } catch { } }
