@@ -1,4 +1,4 @@
-# WinDebloat 🚀
+# WinDebloat
 
 > **A modern, dynamic Windows debloater and memory optimization suite for Windows 10 and 11.**
 
@@ -15,7 +15,7 @@
 
 ---
 
-## 📦 Download & Running (No Installer Required!)
+## Download & Running (No Installer Required)
 
 **WinDebloat requires no installer.** It is built as a 100% standalone, portable single-file executable that can run directly from your Downloads folder, Desktop, or a USB drive without touching your filesystem or registry with an installer.
 
@@ -28,42 +28,42 @@
 
 ---
 
-## 🌟 Key Features
+## Key Features
 
-### 🧠 Real-Time Memory Monitor
+### Real-Time Memory Monitor
 - Live physical RAM consumption, free memory, and utilization percentage gauge.
 - Instant feedback on memory reclaimed after applying debloat actions.
 
-### 🗑️ Bloatware Catalog (OEM & Consumer Bloat)
+### Bloatware Catalog (OEM & Consumer Bloat)
 - **OEM Preloads**: Automatically detects companion and telemetry software from **HP, Dell, Lenovo, and ASUS** (e.g. *HP Smart, HP Print Companion, Dell Command Update, Dell SupportAssist, Lenovo Vantage, MyASUS*).
 - **Consumer & Ad Preloads**: Identifies preinstalled sponsored app stubs (*TikTok, Instagram, Disney+, Spotify, Clipchamp, casual card games*).
 - **Telemetry & Assistant Apps**: Disables or removes *Connected User Experiences (`DiagTrack`), WAP Push Routing (`dmwappushservice`), Feedback Hub, Tips, Cortana, and Copilot*.
 - **Entertainment Hubs**: Identifies unused MSN feeds, maps managers, and legacy media players.
 
-### 📦 Dynamic Scan Component for User-Added Bloat
+### Dynamic Scan Component for User-Added Bloat
 - Scans both 64-bit and 32-bit machine (`HKLM`) and user (`HKCU`) application databases for installed third-party desktop software.
 - Filters out essential Microsoft Visual C++ runtimes and Windows security updates.
 - Inspects publisher, version, install location, and provides direct uninstaller execution.
 
-### ⚡ Reversible Core System Tweaks
+### Reversible Core System Tweaks
 - **Start Menu Web Search**: Prevents `SearchHost.exe` from loading the Edge WebView2 browser engine and sending queries to Bing, speeding up local file/app search.
 - **Windows Widgets & News Feed**: Hides taskbar widget buttons and terminates background feed caching (`MicrosoftStartFeedProvider`).
 - **Browser Background Mode**: Enforces policies stopping Google Chrome and Microsoft Edge from pre-launching stealth background processes or lingering in memory after closure.
 
-### ⚙️ Windows Services Optimization
+### Windows Services Optimization
 - **Active Running Services Only**: Strictly filters candidate services to those currently running in RAM, eliminating clutter from idle or stopped services.
 - **Safe Disabling**: Configures telemetry, Superfetch (`SysMain`), and unused background services to `Disabled` in the Windows Service Control Manager and registry.
 - Stops the active instance immediately and moves the service to the Undo center.
 
-### ↩️ Persistent JSON Undo & Revert Engine
+### Persistent JSON Undo & Revert Engine
 - **Persistent Disk Storage**: Every change, disabled service, and removed startup entry is serialized to a persistent JSON history database (`%LOCALAPPDATA%\WinDebloat\undo_history.json`).
-- **Survives Reboots & App Restarts**: Historical modifications reload automatically into the **↩️ Undo / Revert** tab whenever you open the app.
+- **Survives Reboots & App Restarts**: Historical modifications reload automatically into the **Undo / Revert** tab whenever you open the app.
 - **Dedicated Tab**: Keeps main debloat candidate views clean and focused, preventing clutter.
-- **Card-Level Revert**: Click `↩️ Revert Change` directly on any item in the Undo tab to restore it.
-- **Batch Revert**: Select multiple items in the Undo tab and click `↩️ Revert Selected` to restore them in one go.
-- **Clear History**: Includes a dedicated `🗑️ Clear History` button to purge saved history records from disk when you're satisfied with your optimizations.
+- **Card-Level Revert**: Click `Revert Change` directly on any item in the Undo tab to restore it.
+- **Batch Revert**: Select multiple items in the Undo tab and click `Revert Selected` to restore them in one go.
+- **Clear History**: Includes a dedicated `Clear History` button to purge saved history records from disk when you're satisfied with your optimizations.
 
-### 🛡️ Smart Elevation, Pre-Removal Snapshot & Modern UI
+### Smart Elevation, Pre-Removal Snapshot & Modern UI
 - **Pre-Removal Restore Point Prompt**: Before any changes are committed, WinDebloat prompts you with an optional System Restore Point snapshot modal.
 - **Elevation When Needed**: Runs in standard mode without forcing UAC upfront; automatically prompts for elevation only when applying actions that require Administrator rights.
 - **Modern Dark Dialogs**: Sleek, borderless dark-slate modal dialogs with soft drop shadows and contextual icons instead of dated Win32 message boxes.
@@ -71,7 +71,7 @@
 
 ---
 
-## 🖥️ System Requirements
+## System Requirements
 
 - **Operating System**: Windows 10 (1809+) or Windows 11 (64-bit)
 - **Runtime**: None required for the standalone executable. [.NET 10.0 Windows Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/10.0) for portable/source builds.
@@ -79,18 +79,18 @@
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Running the Pre-Built Binary
 1. Download **`WinDebloat.exe`** from [Releases](https://github.com/foofoodog/WinDebloat/releases).
 2. Right-click and choose **Run as administrator** (or launch normally; the app prompts for elevation when applying admin-level actions).
-3. *(Recommended)* Click **🛡️ Create Restore Point** in the top warning banner.
-4. Select the optimizations you want to apply, or click **⭐ Select Recommended**.
-5. Click **⚡ Apply Selected Actions**.
+3. *(Recommended)* Click **Create Restore Point** in the top warning banner.
+4. Select the optimizations you want to apply, or click **Select Recommended**.
+5. Click **Apply Selected Actions**.
 
 ---
 
-## 🛠️ Building from Source
+## Building from Source
 
 Ensure you have the .NET 10 SDK installed:
 
@@ -108,7 +108,7 @@ dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=
 
 ---
 
-## 📂 Project Architecture
+## Project Architecture
 
 ```
 WinDebloat/
@@ -134,6 +134,6 @@ WinDebloat/
 
 ---
 
-## ⚖️ Disclaimer
+## Disclaimer
 
 WinDebloat is provided as-is without warranty of any kind. Modifying operating system settings, terminating services, or removing preinstalled software carries inherent risk. Always ensure your important files are backed up and a System Restore Point is created prior to debloating.
