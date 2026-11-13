@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Windows Debloat &amp; RAM Optimizer" 
         Height="820" Width="1060"
-        MinHeight="600" MinWidth="850"
+        MinHeight="600" MinWidth="1000"
         WindowStartupLocation="CenterScreen"
         Background="#0A0E17"
         Foreground="#F8FAFC"
@@ -24,11 +24,13 @@
         <Style TargetType="TabItem">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="#94A3B8"/>
-            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontSize" Value="13"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Padding" Value="16,10"/>
+            <Setter Property="Padding" Value="8,8"/>
+            <Setter Property="Margin" Value="0,0,12,0"/>
             <Setter Property="BorderThickness" Value="0,0,0,3"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TabItem">
@@ -572,42 +574,42 @@
                     BorderThickness="0" 
                     Margin="0,0,0,12">
             <!-- System Tweaks Tab -->
-            <TabItem Header="{Binding SystemTweaksTabHeader}">
+            <TabItem Header="{Binding SystemTweaksTabHeader}" MinWidth="145">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,12,0,0">
                     <ItemsControl ItemsSource="{Binding SystemTweakItems}" ItemTemplate="{StaticResource DebloatItemTemplate}"/>
                 </ScrollViewer>
             </TabItem>
 
             <!-- Startup Apps Tab -->
-            <TabItem Header="{Binding StartupTabHeader}">
+            <TabItem Header="{Binding StartupTabHeader}" MinWidth="145">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,12,0,0">
                     <ItemsControl ItemsSource="{Binding StartupItems}" ItemTemplate="{StaticResource DebloatItemTemplate}"/>
                 </ScrollViewer>
             </TabItem>
 
             <!-- Bloatware Tab -->
-            <TabItem Header="{Binding BloatwareTabHeader}">
+            <TabItem Header="{Binding BloatwareTabHeader}" MinWidth="135">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,12,0,0">
                     <ItemsControl ItemsSource="{Binding BloatwareItems}" ItemTemplate="{StaticResource DebloatItemTemplate}"/>
                 </ScrollViewer>
             </TabItem>
 
             <!-- Windows Services Tab -->
-            <TabItem Header="{Binding ServicesTabHeader}">
+            <TabItem Header="{Binding ServicesTabHeader}" MinWidth="170">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,12,0,0">
                     <ItemsControl ItemsSource="{Binding ServiceItems}" ItemTemplate="{StaticResource DebloatItemTemplate}"/>
                 </ScrollViewer>
             </TabItem>
 
             <!-- User Installed Apps Tab -->
-            <TabItem Header="{Binding UserAppsTabHeader}">
+            <TabItem Header="{Binding UserAppsTabHeader}" MinWidth="185">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,12,0,0">
                     <ItemsControl ItemsSource="{Binding UserAppItems}" ItemTemplate="{StaticResource DebloatItemTemplate}"/>
                 </ScrollViewer>
             </TabItem>
 
             <!-- Dedicated Full Undo & Revert Tab -->
-            <TabItem Header="{Binding RevertTabHeader}">
+            <TabItem Header="{Binding RevertTabHeader}" MinWidth="145" Margin="0">
                 <Grid Margin="0,12,0,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
