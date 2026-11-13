@@ -9,6 +9,10 @@
 
 ---
 
+![WinDebloat Application Screenshot](assets/screenshot.png)
+
+---
+
 > [!WARNING]
 > **USE AT YOUR OWN RISK — SYSTEM INTEGRITY WARNING**
 > Modifying core Windows components, disabling system services, or removing preinstalled packages can cause system instability, break functionality, or brick your machine. Always create a **System Restore Point** using the built-in one-click tool before applying optimizations.
