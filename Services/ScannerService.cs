@@ -134,7 +134,7 @@ namespace WinDebloat.Services
                             EstimatedMemory = estRam,
                             StartupStatus = startupStatus,
                             Consequences = "Prevents this application from starting automatically when Windows boots. You can still launch it manually from the Start menu or desktop at any time.",
-                            HelpUrl = "https://support.microsoft.com/en-us/windows/change-which-apps-run-automatically-at-startup-in-windows-e030b74c-8bc1-4604-d459-ae3cb0d69492",
+                            HelpUrl = "https://support.microsoft.com/en-us/windows/experience/startup-boot/configure-startup-applications-in-windows",
                             IsRecommended = recommended,
                             IsSelected = recommended,
                             Tag = originalCmd,
@@ -189,7 +189,7 @@ namespace WinDebloat.Services
                         Details = file,
                         EstimatedMemory = "~50 MB",
                         Consequences = "Deletes the startup shortcut from your user Startup folder so this program won't start automatically on boot. The installed application is not deleted and can still be run manually.",
-                        HelpUrl = "https://support.microsoft.com/en-us/windows/change-which-apps-run-automatically-at-startup-in-windows-e030b74c-8bc1-4604-d459-ae3cb0d69492",
+                        HelpUrl = "https://support.microsoft.com/en-us/windows/experience/startup-boot/configure-startup-applications-in-windows",
                         IsRecommended = true,
                         IsSelected = true,
                         ApplyAction = async (progress) =>
@@ -227,7 +227,7 @@ namespace WinDebloat.Services
                         Details = file,
                         EstimatedMemory = "~70 MB",
                         Consequences = "Deletes the startup shortcut from the All-Users Common Startup folder so this program won't start automatically for any user on boot. The installed application is not deleted.",
-                        HelpUrl = "https://support.microsoft.com/en-us/windows/change-which-apps-run-automatically-at-startup-in-windows-e030b74c-8bc1-4604-d459-ae3cb0d69492",
+                        HelpUrl = "https://support.microsoft.com/en-us/windows/experience/startup-boot/configure-startup-applications-in-windows",
                         IsRecommended = false,
                         IsSelected = false,
                         RequiresAdmin = true,
@@ -329,7 +329,7 @@ namespace WinDebloat.Services
                         EstimatedMemory = app.EstRam,
                         IsBloatware = true,
                         Consequences = "Uninstalls this application for the current user and unprovisions it from the system. You can easily reinstall it anytime from the Microsoft Store or restore it using WinDebloat's Undo center.",
-                        HelpUrl = "https://support.microsoft.com/en-us/windows/uninstall-or-remove-apps-and-programs-in-windows-4b55f974-2cc6-2d2b-d092-59590861cd08",
+                        HelpUrl = "https://support.microsoft.com/en-us/windows/apps/uninstall-or-remove-apps-and-programs-in-windows",
                         IsRecommended = app.Recommended,
                         IsSelected = app.Recommended,
                         ApplyAction = async (progress) =>
@@ -379,7 +379,7 @@ namespace WinDebloat.Services
                 EstimatedMemory = "~350 MB",
                 RequiresReboot = true,
                 Consequences = "Disables Bing internet search suggestions in the Windows Start menu search box. Only local files, apps, and settings on your PC will appear in search results (which makes search noticeably faster and stops SearchHost from loading Edge WebView2 into RAM).",
-                HelpUrl = "https://support.microsoft.com/en-us/windows/search-for-anything-anywhere-82730eb7-8149-411a-8db4-d5764e9a8966",
+                HelpUrl = "https://support.microsoft.com/en-us/windows/experience/do-more-with-windows-search",
                 IsRecommended = !bingApplied,
                 IsSelected = !bingApplied,
                 IsCompleted = bingApplied,
@@ -457,7 +457,7 @@ namespace WinDebloat.Services
                 EstimatedMemory = "~60 MB",
                 RequiresReboot = true,
                 Consequences = "Hides the taskbar Widgets icon and prevents Windows from pre-loading and caching MSN news, weather, and traffic feeds in memory.",
-                HelpUrl = "https://support.microsoft.com/en-us/windows/stay-up-to-date-with-widgets-7ba79aaa-82f4-42b5-bb35-512c1409f984",
+                HelpUrl = "https://support.microsoft.com/en-us/windows/experience/personalization/stay-up-to-date-with-widgets-in-windows",
                 IsRecommended = !widgetsApplied,
                 IsSelected = !widgetsApplied,
                 IsCompleted = widgetsApplied,
@@ -864,7 +864,7 @@ namespace WinDebloat.Services
                 IsCompleted = cdDisabled,
                 StatusMessage = cdDisabled ? "Already Disabled" : "Ready",
                 Consequences = "Disables background phone syncing and cross-device resume (e.g., continuing browsing tabs or receiving calls from Android/iOS on PC).",
-                HelpUrl = "https://support.microsoft.com/en-us/topic/phone-link-requirements-and-setup-cd2a59f4-18f4-42f2-8958-5d512a83214b",
+                HelpUrl = "https://support.microsoft.com/en-us/windows/apps/phonelink/phone-link-requirements-and-setup",
                 UndoHistoryEntry = new UndoRecord
                 {
                     Id = "tweak_disable_cross_device",
@@ -937,7 +937,7 @@ namespace WinDebloat.Services
                     Desc = "Scans installed applications and hardware compatibility, transmitting telemetry to Microsoft.", 
                     Recommended = true,
                     Consequences = "Prevents Windows from scanning all installed applications and driver inventory for upload to Microsoft diagnostic servers.",
-                    HelpUrl = "https://learn.microsoft.com/en-us/windows/deployment/upgrade/how-windows-compatibility-appraiser-works"
+                    HelpUrl = "https://learn.microsoft.com/en-us/troubleshoot/windows-client/setup-upgrade-and-drivers/use-windows-setup-compatibility-scan-logs-to-identify-blocking-issues"
                 },
                 new { 
                     Name = "DPS", 
@@ -946,7 +946,7 @@ namespace WinDebloat.Services
                     Desc = "Enables problem detection, troubleshooting, and diagnostic reporting to Microsoft.", 
                     Recommended = true,
                     Consequences = "Disables automated built-in diagnostic troubleshooting wizards and background problem reporting to Microsoft.",
-                    HelpUrl = "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/diagnostic-policy-service"
+                    HelpUrl = "https://learn.microsoft.com/en-us/windows/privacy/configure-windows-diagnostic-data-in-your-organization"
                 },
                 new { 
                     Name = "SysMain", 
@@ -955,7 +955,7 @@ namespace WinDebloat.Services
                     Desc = "Caches frequently used applications into RAM (high disk/RAM load on older drives).", 
                     Recommended = false,
                     Consequences = "Disables prefetching applications into memory cache. On systems with fast NVMe/SSD storage, disabling SysMain reduces unnecessary memory caching and disk writes with zero noticeable slowdown.",
-                    HelpUrl = "https://learn.microsoft.com/en-us/windows-server/administration/performance-tuning/subsystem/cache-and-memory-management/"
+                    HelpUrl = "https://learn.microsoft.com/en-us/windows-server/administration/performance-tuning/subsystem/cache-memory-management"
                 },
                 
                 // Cloud & Network Background Syncing
@@ -984,7 +984,7 @@ namespace WinDebloat.Services
                     Desc = "Coordinates discovery and connectivity with companion mobile devices (Phone Link).", 
                     Recommended = false,
                     Consequences = "Disables device discovery and background syncing for Microsoft Phone Link with iOS and Android devices.",
-                    HelpUrl = "https://support.microsoft.com/en-us/topic/phone-link-requirements-and-setup-cd2a59f4-18f4-42f2-8958-5d512a83214b"
+                    HelpUrl = "https://support.microsoft.com/en-us/windows/apps/phonelink/phone-link-requirements-and-setup"
                 },
                 new { 
                     Name = "lfsvc", 
@@ -993,7 +993,7 @@ namespace WinDebloat.Services
                     Desc = "Monitors system physical location and feeds location coordinates to apps.", 
                     Recommended = false,
                     Consequences = "Prevents Windows applications from accessing your device's physical GPS/network location directly via Windows Location APIs.",
-                    HelpUrl = "https://support.microsoft.com/en-us/windows/windows-location-service-and-privacy-3a8eed9b-a442-9344-9670-09b344422d06"
+                    HelpUrl = "https://support.microsoft.com/en-us/windows/privacy/windows-location-service-and-privacy"
                 },
 
                 // Consumer & Background services
@@ -1004,7 +1004,7 @@ namespace WinDebloat.Services
                     Desc = "Background map manager for Windows Maps.", 
                     Recommended = true,
                     Consequences = "Disables background offline map tile downloads and sync for the Windows Maps app.",
-                    HelpUrl = "https://support.microsoft.com/en-us/windows/download-maps-for-offline-viewing-in-windows-fbe0d869-aa2b-8667-bb96-6e541a05ae6a"
+                    HelpUrl = "https://support.microsoft.com/en-us/windows/apps/find-your-way-with-maps"
                 },
                 new { 
                     Name = "RetailDemo", 
@@ -1013,7 +1013,7 @@ namespace WinDebloat.Services
                     Desc = "Controls device behavior in store demonstration mode.", 
                     Recommended = true,
                     Consequences = "Disables retail kiosk store demonstration mode. Has no impact on personal, professional, or gaming use.",
-                    HelpUrl = "https://learn.microsoft.com/en-us/windows/configuration/retail-demo-experience"
+                    HelpUrl = "https://learn.microsoft.com/en-us/windows-hardware/customize/desktop/retail-demo-experience"
                 },
                 new { 
                     Name = "WMPNetworkSvc", 
@@ -1022,7 +1022,7 @@ namespace WinDebloat.Services
                     Desc = "Shares media libraries over local network.", 
                     Recommended = true,
                     Consequences = "Disables local DLNA/UPnP network media sharing from Windows Media Player to other smart devices on your local network.",
-                    HelpUrl = "https://support.microsoft.com/en-us/windows/media-streaming-in-windows-media-player-8d96b92a-bf3b-9677-45ba-274e760c4004"
+                    HelpUrl = "https://learn.microsoft.com/en-us/windows/win32/wmp/windows-media-player-sdk"
                 },
                 
                 // Xbox Live Services
@@ -1062,7 +1062,7 @@ namespace WinDebloat.Services
                     Desc = "Manages printer queues. Safe to disable if you do not use a printer.", 
                     Recommended = false,
                     Consequences = "Disables printing queues. You will not be able to print to physical printers or export via Print to PDF until this service is re-enabled.",
-                    HelpUrl = "https://learn.microsoft.com/en-us/windows/win32/printdocs/print-spooler-architecture"
+                    HelpUrl = "https://learn.microsoft.com/en-us/windows-hardware/drivers/print/print-spooler-architecture"
                 },
                 new { 
                     Name = "TermService", 
@@ -1193,7 +1193,7 @@ namespace WinDebloat.Services
                     Details = $"Install Location: {app.InstallLocation}\nUninstall Command: {uninstCmd}",
                     EstimatedMemory = "~50 - 250 MB",
                     Consequences = "Runs the official desktop uninstaller for this program. Application files, configuration, and registry entries may be removed.",
-                    HelpUrl = "https://support.microsoft.com/en-us/windows/uninstall-or-remove-apps-and-programs-in-windows-4b55f974-2cc6-2d2b-d092-59590861cd08",
+                    HelpUrl = "https://support.microsoft.com/en-us/windows/apps/uninstall-or-remove-apps-and-programs-in-windows",
                     IsRecommended = false,
                     IsSelected = false,
                     RequiresAdmin = isHklm,
